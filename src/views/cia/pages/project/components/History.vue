@@ -2,7 +2,7 @@
 import { FilterMatchMode } from 'primevue/api';
 import { onMounted, reactive, ref, watch, onBeforeMount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
-import { axiosManagement } from '../../../../service/axios';
+import { axiosManagement } from '../../../../../service/axios';
 
 const local = ref({
     user_id: localStorage.getItem('userId'),

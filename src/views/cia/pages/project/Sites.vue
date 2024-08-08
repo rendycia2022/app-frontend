@@ -4,7 +4,7 @@ import { onMounted, reactive, ref, watch, onBeforeMount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRoute } from 'vue-router'
 
-import History from './History.vue';
+import History from './components/History.vue';
 
 const local = ref({
     user_id: localStorage.getItem('id'),

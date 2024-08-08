@@ -77,10 +77,17 @@ const router = createRouter({
                     name: 'ciaDashboard',
                     component: () => import('@/views/cia/pages/MainDisplay.vue'),
                 },
+
+                // project
                 {
                     path: '/cia/project/summary',
                     name: 'ciaPageProjectSummary',
                     component: () => import('@/views/cia/pages/project/Summary.vue'),
+                },
+                {
+                    path: '/cia/project/list',
+                    name: 'ciaPageProjectList',
+                    component: () => import('@/views/cia/pages/project/List.vue'),
                 },
                 {
                     path: '/cia/project/sites/:apps/:code',
