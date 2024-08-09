@@ -6,12 +6,12 @@ import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from "primevue/useconfirm";
 
-import { axiosCpSmart } from '../../../../../service/axios';
+import { axiosCpSmart } from '../../../../service/axios';
 
 // components
-import Import from './Import.vue';
-import Timeline from './Timeline.vue';
-import Actual from './Actual.vue';
+import Import from './components/Import.vue';
+import Timeline from './components/Timeline.vue';
+import Actual from './components/Actual.vue';
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -219,6 +219,15 @@ const seeMore = (detail) =>{
     window.open(target, '_blank').focus();
 }
 
+// push page
+const rounting = (path, detail) =>{
+    const project = detail.project_name;
+    const project_id = detail.ringspan_id;
+    const project_name = detail.ringspan_name;
+    
+    router.push(path+'/'+project+'/'+project_id+'/'+project_name);
+}
+
 </script>
 
 <template>
@@ -279,6 +288,18 @@ const seeMore = (detail) =>{
                     <span>
                         <Button :style="{ color: '#6c757d' }" :label="slotProps.data.ringspan_name" class="small-padding-button" @click="seeMore(slotProps.data)" rounded text size="small" />
                     </span>
+                </template>
+            </Column>
+            <Column field="budget" header="Budget" style="min-width: 100px" sortable >
+                <template #body="slotProps">
+                    <Button 
+                        icon="pi pi-bitcoin" 
+                        severity="success" 
+                        text rounded
+                        size="large"
+                        v-tooltip="'Budget'"
+                        @click="rounting('/cp/budget', slotProps.data)"
+                    />
                 </template>
             </Column>
             <Column field="progress.result" header="Progress" style="min-width: 100px" class="text-center" sortable >

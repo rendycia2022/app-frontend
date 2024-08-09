@@ -48,6 +48,13 @@ const router = createRouter({
                     component: () => import('@/views/cp/pages/dashboard/components/Milestone.vue'),
                 },
                 
+                // budget
+                {
+                    path: '/cp/budget/:project/:project_id/:project_name',
+                    name: 'cpBudget',
+                    component: () => import('@/views/cp/pages/dashboard/Budget.vue'),
+                },
+                
             ]
         },
 

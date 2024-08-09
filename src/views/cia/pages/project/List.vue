@@ -51,6 +51,20 @@ const seeMore = (detail) =>{
     window.open(target, '_blank').focus();
 }
 
+// data formulas
+const margin = (detail) =>{
+    
+    var revenue = detail.revenue_price * detail.revenue_qty;
+    var margin = revenue - detail.af_total;
+
+    // percent
+    var percent = (margin / revenue) * 100;
+
+    const display = formatCurrency(margin)+' | '+Math.round(percent)+'%';
+
+    return display;
+}
+
 </script>
 
 <template>
@@ -104,20 +118,57 @@ const seeMore = (detail) =>{
                     >{{ formatCurrency(slotProps.data.revenue_price * slotProps.data.revenue_qty) }}</small>
                 </template>
             </Column>
+            <!-- <Column field="af_total" header="Current Revenue" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>Current Revenue</small></span>
+                    <small 
+                    v-tooltip="'Workorders: '+formatNumber(slotProps.data.count_workorders)"
+                    >{{ formatCurrency(slotProps.data.count_workorders * slotProps.data.revenue_price) }}</small>
+                </template>
+            </Column> -->
             <Column field="af_total" header="Total AF" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Total AF</small></span>
                     <small>{{ formatCurrency(slotProps.data.af_total) }}</small>
                 </template>
             </Column>
-            <Column field="af_total" header="Progress" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+            <Column field="cogs" header="COGS" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
-                    <span class="p-column-title text-xs"><small>Progress</small></span>
-                    <small 
-                    v-tooltip="'Workorders: '+formatNumber(slotProps.data.count_workorders)"
-                    >{{ formatCurrency(slotProps.data.count_workorders * slotProps.data.revenue_price) }}</small>
+                    <span class="p-column-title text-xs"><small>COGS</small></span>
+                    <small>{{ formatCurrency(slotProps.data.af_total) }}</small>
                 </template>
             </Column>
+            <Column field="resources" header="Resources" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>Resources</small></span>
+                    <small></small>
+                </template>
+            </Column>
+            <Column field="indirect" header="Indirect" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>Indirect</small></span>
+                    <small></small>
+                </template>
+            </Column>
+            <Column field="margin" header="Margin" :sortable="true" headerStyle="width:20%; min-width:15rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>Margin</small></span>
+                    <small>{{ margin(slotProps.data) }}</small>
+                </template>
+            </Column>
+            <Column field="hpp_subcon" header="HPP Subcon (in %)" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>HPP Subcon (in %)</small></span>
+                    <small></small>
+                </template>
+            </Column>
+            <Column field="hpp_nonsubcon" header="HPP Non Subcon (in %)" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>HPP Non Subcon (in %)</small></span>
+                    <small></small>
+                </template>
+            </Column>
+            
             
         </DataTable>
     </div>

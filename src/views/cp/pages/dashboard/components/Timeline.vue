@@ -104,28 +104,26 @@ const checkedConfirm = async () =>{
         Updated By {{ detail.created_by }} at {{ detail.created_at }}
     </small>
 
-    <ScrollPanel style="width: 100%; height: 500px">
-        <Timeline :value="products">
-            <template #opposite="slotProps">
-                <div>
-                    <small><b>{{ slotProps.item.opposite?.date }}</b></small>
-                </div>
-                <div>
-                    <small class="text-surface-500 dark:text-surface-400">{{ slotProps.item.opposite?.title }}</small>
-                </div>
-            </template>
-            <template #content="slotProps">
-                <div>
-                    <small><b>{{ slotProps.item.content?.date }}</b></small>
-                </div>
-                <div>
-                    <small v-if="slotProps.item.content?.total" :style="{ color: '#1fdbd2' }" >Total: {{ slotProps.item.content?.title }}</small>
-                    <small v-else class="text-surface-500 dark:text-surface-400" >{{ slotProps.item.content?.title }}</small>
-                </div>
-                
-            </template>
-        </Timeline>
-    </ScrollPanel>
+    <Timeline :value="products">
+        <template #opposite="slotProps">
+            <div>
+                <small><b>{{ slotProps.item.opposite?.date }}</b></small>
+            </div>
+            <div>
+                <small class="text-surface-500 dark:text-surface-400">{{ slotProps.item.opposite?.title }}</small>
+            </div>
+        </template>
+        <template #content="slotProps">
+            <div>
+                <small><b>{{ slotProps.item.content?.date }}</b></small>
+            </div>
+            <div>
+                <small v-if="slotProps.item.content?.total" :style="{ color: '#1fdbd2' }" >Total: {{ slotProps.item.content?.title }}</small>
+                <small v-else class="text-surface-500 dark:text-surface-400" >{{ slotProps.item.content?.title }}</small>
+            </div>
+            
+        </template>
+    </Timeline>
     
 
     <div class="grid">
