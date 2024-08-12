@@ -220,12 +220,11 @@ const seeMore = (detail) =>{
 }
 
 // push page
-const rounting = (path, detail) =>{
-    const project = detail.project_name;
+const openBudget = (detail) =>{
     const project_id = detail.ringspan_id;
     const project_name = detail.ringspan_name;
     
-    router.push(path+'/'+project+'/'+project_id+'/'+project_name);
+    router.push('/cp/budget/'+project_id+'/'+project_name);
 }
 
 </script>
@@ -298,7 +297,7 @@ const rounting = (path, detail) =>{
                         text rounded
                         size="large"
                         v-tooltip="'Budget'"
-                        @click="rounting('/cp/budget', slotProps.data)"
+                        @click="openBudget(slotProps.data)"
                     />
                 </template>
             </Column>

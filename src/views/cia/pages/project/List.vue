@@ -132,12 +132,6 @@ const margin = (detail) =>{
                     <small>{{ formatCurrency(slotProps.data.af_total) }}</small>
                 </template>
             </Column>
-            <Column field="cogs" header="COGS" :sortable="true" headerStyle="width:14%; min-width:10rem;">
-                <template #body="slotProps">
-                    <span class="p-column-title text-xs"><small>COGS</small></span>
-                    <small>{{ formatCurrency(slotProps.data.af_total) }}</small>
-                </template>
-            </Column>
             <Column field="resources" header="Resources" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Resources</small></span>
@@ -148,6 +142,12 @@ const margin = (detail) =>{
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Indirect</small></span>
                     <small></small>
+                </template>
+            </Column>
+            <Column field="cogs" header="COGS" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs" ><small>COGS</small></span>
+                    <small>{{ formatCurrency(slotProps.data.af_total) }}</small>
                 </template>
             </Column>
             <Column field="margin" header="Margin" :sortable="true" headerStyle="width:20%; min-width:15rem;">

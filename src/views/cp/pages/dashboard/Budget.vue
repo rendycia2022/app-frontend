@@ -10,11 +10,11 @@ import { axiosCpSmart, axiosHR } from '../../../../service/axios';
 const toast = useToast();
 
 const local = ref({
-    project: (new URL(window.location.href)).pathname.split('/')[3],
-    project_id: (new URL(window.location.href)).pathname.split('/')[4],
-    project_name: (new URL(window.location.href)).pathname.split('/')[5],
+    project_id: (new URL(window.location.href)).pathname.split('/')[3],
+    project_name: (new URL(window.location.href)).pathname.split('/')[4],
     user_id: localStorage.getItem('id'),
     token: localStorage.getItem('token'),
+    backend_target: 'http://103.188.175.175:58301/api/v1',
 });
 
 onMounted(() => {
@@ -23,6 +23,7 @@ onMounted(() => {
 });
 
 const products = ref(null);
+const title = ref({});
 const fetching = async () =>{
     const response = await axiosCpSmart.get('/budget/plan/'+local.value.project_id+'/'+local.value.project_name,{ 
         params:{
@@ -30,8 +31,8 @@ const fetching = async () =>{
             user_id: local.value.user_id,
         }
     });
-    products.value = response.data
-    console.log(products.value);
+    console.log(response.data);
+    title.value = response.data.project;
 }
 
 // filter
@@ -45,10 +46,30 @@ const initFilters = () => {
     };
 };
 
-// New
-const openNew = () =>{
+const onUpload = () => {
+    toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
+};
 
-}
+const downloadTemplateBudgetPlan = async () => {
+    await axiosCpSmart.get('/budget/plan/template', {
+        params:{
+                
+            },
+        responseType: 'blob', // Menentukan tipe respons sebagai blob (binary large object)
+        
+    })
+    .then(response => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'Template_BudgetPlan_'+title.value.project_name+'.xlsx'); // Atur nama file sesuai kebutuhan Anda
+      document.body.appendChild(link);
+      link.click();
+    })
+    .catch(error => {
+      console.error(error);
+    });
+};
 
 
 </script>
@@ -59,8 +80,10 @@ const openNew = () =>{
         <div class="col-12">
             <div class="card">
                 <Toast />
-                <h5 class="mb-2 text-900">Privacy</h5>
-                <span class="text-600">Neque egestas congue quisque.</span>
+                <div class="mb-1" >
+                    <span>Segment: <b>{{ title.project_name }}</b></span>
+                </div>
+                <span class="mb-5">Project: {{ title.project }}</span>
 
                 <DataTable
                     :value="products"
@@ -77,11 +100,13 @@ const openNew = () =>{
                 >
                     <template #header>
                         <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-                            <div class="flex items-center gap-2">
-                                <Button icon="pi pi-plus" severity="success" v-tooltip="'Create'" outlined rounded aria-label="New" @click="openNew" />
+                            <div class="flex items-center">
+                                <FileUpload mode="basic" name="file" :url="local.backend_target+'/budget/plan'" accept=".xlsx,.xls" :maxFileSize="10000000" @upload="onUpload" :auto="true" chooseLabel="Browse" />
+                                <Button icon="pi pi-plus" class="mr-2" severity="info" v-tooltip="'Create'" outlined rounded aria-label="New" />
+                                <Button icon="pi pi-file-excel" severity="success" v-tooltip="'Download Budget Template'" outlined rounded aria-label="Download Tempate" @click="downloadTemplateBudgetPlan()" ></Button>
                             </div>
-                            <h5>Budget</h5>
-                            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <span>Budget</span>
+                            <span class="block p-input-icon-left">
                                 <i class="pi pi-search" />
                                 <InputText v-model="filters['global'].value" placeholder="Search" type="text" class="w-32 sm:w-auto" style="border-radius: 3rem" />
                             </span>
