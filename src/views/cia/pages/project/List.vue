@@ -36,6 +36,32 @@ const initFilters = () => {
     };
 };
 
+// grouping
+const expandedRowGroups = ref();
+const getSeverity = (status) => {
+    switch (status) {
+         case 'Close':
+            return 'success';
+        case 'Open':
+            return 'warning';
+
+    }
+};
+
+const calculateCustomerTotal = (name) => {
+    let total = 0;
+    if (products.value) {
+        for (let product of products.value) {
+            if (product.representative.cust_init === name) {
+                total++;
+
+            }
+        }
+    }
+
+    return total;
+};
+
 // formating data
 const formatCurrency = (value) => {
     return value?.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
@@ -54,15 +80,6 @@ const seeMore = (detail) =>{
 // data formulas
 const margin = (detail) =>{
     
-    var revenue = detail.revenue_price * detail.revenue_qty;
-    var margin = revenue - detail.af_total;
-
-    // percent
-    var percent = (margin / revenue) * 100;
-
-    const display = formatCurrency(margin)+' | '+Math.round(percent)+'%';
-
-    return display;
 }
 
 </script>
@@ -71,19 +88,11 @@ const margin = (detail) =>{
     
     <div class="card">
         <DataTable
-            :value="products"
-            dataKey="no_document"
-            :filters="filters"
-            :paginator="true"
-            :rows="10"
-            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-            :rowsPerPageOptions="[5, 10, 25]"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
-            responsiveLayout="scroll"
-            size="small"
-            scrollable scrollHeight="450px"
+            v-model:expandedRowGroups="expandedRowGroups" :value="products" tableStyle="min-width: 50rem"
+                expandableRowGroups rowGroupMode="subheader" groupRowsBy="representative.cust_init"
+                sortMode="single" sortField="representative.cust_init" :sortOrder="1"
         >
-            <template #header>
+            <!-- <template #header>
                 <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
                     <h5 class="m-0">Project by Purchase Order</h5>
                     <span class="block mt-2 md:mt-0 p-input-icon-left">
@@ -91,41 +100,42 @@ const margin = (detail) =>{
                         <InputText v-model="filters['global'].value" placeholder="Search..." />
                     </span>
                 </div>
+            </template> -->
+            <template #groupheader="slotProps">
+                <span class="align-middle ml-2 font-bold leading-normal"><small>{{ slotProps.data.representative.cust_init }}, Total PO: {{ calculateCustomerTotal(slotProps.data.representative.cust_init) }}</small></span>
             </template>
-
-            <Column field="no_document" header="Purchase Order" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+            <Column field="representative.cust_init" header="Customer" :sortable="true" headerStyle="width:20%; min-width:20rem;">
+            </Column>
+            <Column field="po_date" header="Date" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>Date</small></span>
+                    <span>{{ slotProps.data.po_date }}</span>
+                </template>
+            </Column>
+            <Column field="status" header="Status" :sortable="true" headerStyle="width:10%; min-width:8rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>Status</small></span>
+                    <Tag :value="slotProps.data.status" :severity="getSeverity(slotProps.data.status)" />
+                </template>
+            </Column>
+            <Column field="no_document" header="Purchase Order" :sortable="true" headerStyle="width:20%; min-width:20rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Purchase Order</small></span>
-                    <span>
-                        <Button severity="info" :label="slotProps.data.no_document" class="small-padding-button" @click="seeMore(slotProps.data)" rounded text size="small" />
-                    </span>
+                    <span>{{ slotProps.data.no_document }}</span>
                 </template>
             </Column>
-            <Column field="revenue_price" header="Price" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+            <Column field="po_value" header="Nilai PO" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
-                    <span class="p-column-title text-xs"><small>Price</small></span>
-                    <small>{{ formatCurrency(slotProps.data.revenue_price) }}</small>
+                    <span class="p-column-title text-xs"><small>Nilai PO</small></span>
+                    <small>{{ formatCurrency(slotProps.data.po_value) }}</small>
                 </template>
             </Column>
-            <Column 
-                field="revenue_total" header="Expected Revenue"
-                :sortable="true" headerStyle="width:14%; min-width:10rem;"
-            >
+            <Column field="revenue" header="Invoice" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
-                    <span class="p-column-title text-xs"><small>Expected Revenue</small></span>
-                    <small 
-                    v-tooltip="'qty '+formatNumber(slotProps.data.revenue_qty)"
-                    >{{ formatCurrency(slotProps.data.revenue_price * slotProps.data.revenue_qty) }}</small>
+                    <span class="p-column-title text-xs"><small>Invoice</small></span>
+                    <small>{{ formatCurrency(slotProps.data.revenue) }}</small>
                 </template>
             </Column>
-            <!-- <Column field="af_total" header="Current Revenue" :sortable="true" headerStyle="width:14%; min-width:10rem;">
-                <template #body="slotProps">
-                    <span class="p-column-title text-xs"><small>Current Revenue</small></span>
-                    <small 
-                    v-tooltip="'Workorders: '+formatNumber(slotProps.data.count_workorders)"
-                    >{{ formatCurrency(slotProps.data.count_workorders * slotProps.data.revenue_price) }}</small>
-                </template>
-            </Column> -->
             <Column field="af_total" header="Total AF" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Total AF</small></span>
@@ -153,7 +163,13 @@ const margin = (detail) =>{
             <Column field="margin" header="Margin" :sortable="true" headerStyle="width:20%; min-width:15rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Margin</small></span>
-                    <small>{{ margin(slotProps.data) }}</small>
+                    <small>{{  }}</small>
+                </template>
+            </Column>
+            <Column field="margin_percent" header="% Margin" :sortable="true" headerStyle="width:20%; min-width:15rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>% Margin</small></span>
+                    <small>{{  }}</small>
                 </template>
             </Column>
             <Column field="hpp_subcon" header="HPP Subcon (in %)" :sortable="true" headerStyle="width:14%; min-width:10rem;">

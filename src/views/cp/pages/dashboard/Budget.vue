@@ -33,6 +33,7 @@ const fetching = async () =>{
     });
     console.log(response.data);
     title.value = response.data.project;
+    products.value = response.data.list;
 }
 
 // filter
@@ -47,7 +48,8 @@ const initFilters = () => {
 };
 
 const onUpload = () => {
-    toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
+    toast.add({ severity: 'success', summary: 'Success', detail: 'File Uploaded', life: 3000 });
+    fetching();
 };
 
 const downloadTemplateBudgetPlan = async () => {
@@ -69,6 +71,11 @@ const downloadTemplateBudgetPlan = async () => {
     .catch(error => {
       console.error(error);
     });
+};
+
+// formating data
+const formatCurrency = (value) => {
+    return value?.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
 };
 
 
@@ -101,9 +108,15 @@ const downloadTemplateBudgetPlan = async () => {
                     <template #header>
                         <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
                             <div class="flex items-center">
-                                <FileUpload mode="basic" name="file" :url="local.backend_target+'/budget/plan'" accept=".xlsx,.xls" :maxFileSize="10000000" @upload="onUpload" :auto="true" chooseLabel="Browse" />
-                                <Button icon="pi pi-plus" class="mr-2" severity="info" v-tooltip="'Create'" outlined rounded aria-label="New" />
-                                <Button icon="pi pi-file-excel" severity="success" v-tooltip="'Download Budget Template'" outlined rounded aria-label="Download Tempate" @click="downloadTemplateBudgetPlan()" ></Button>
+                                <FileUpload 
+                                    mode="basic" name="file" class="mr-2"
+                                    :url="local.backend_target+'/budget/plan/'+local.project_id+'/'+local.project_name+'/'+local.user_id" 
+                                    accept=".xlsx,.xls" :maxFileSize="10000000" @upload="onUpload" 
+                                    :auto="true"
+                                    v-tooltip="'Import Budget Plan'"
+                                    chooseLabel="Import"
+                                />
+                                <Button icon="pi pi-file-excel" severity="success" v-tooltip="'Download Budget Plan Template'" outlined rounded aria-label="Download Tempate" @click="downloadTemplateBudgetPlan()" ></Button>
                             </div>
                             <span>Budget</span>
                             <span class="block p-input-icon-left">
@@ -113,13 +126,19 @@ const downloadTemplateBudgetPlan = async () => {
                         </div>
                     </template>
 
-                    <Column header="#" headerStyle="width:2%; min-width:2rem;">
+                    <Column header="#" headerStyle="width:1%; min-width:1rem;">
                         <template #body="slotProps">
                             <small>{{ slotProps.index + 1 }}</small>
                         </template>
                     </Column>
-                    <Column field="percent" header="Percent" :sortable="true" headerStyle="width:5%; min-width:5rem;">
+                    <Column field="name" header="Name" :sortable="true" headerStyle="width:5%; min-width:5rem;">
                         <template #body="slotProps">
+                            <ColorPicker id="color" v-model="slotProps.data.color"/> <span><small>{{ slotProps.data.name }}</small></span>
+                        </template>
+                    </Column>
+                    <Column field="value" header="Value" :sortable="true" headerStyle="width:5%; min-width:5rem;">
+                        <template #body="slotProps">
+                            <span><small>{{ formatCurrency(slotProps.data.value) }}</small></span>
                         </template>
                     </Column>
                     

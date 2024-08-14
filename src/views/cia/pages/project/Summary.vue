@@ -5,7 +5,7 @@ import { useLayout } from '@/layout/composables/layout';
 import { axiosManagement } from '../../../../service/axios';
 
 import History from './components/History.vue';
-import ApprovalForm from './components/ApprovalForm.vue';
+import ChartRevenue from './components/ChartRevenue.vue';
 import Sites from './Sites.vue';
 
 const display = ref({
@@ -18,7 +18,7 @@ const display = ref({
     
     <div class="grid">
         <div class="col-12 sm:col-12 md:col-6 lg:col-8 xl:col-8">
-            <div class="card">Dashboard</div>
+            <ChartRevenue />
         </div>
         <div class="col-12 sm:col-12 md:col-6 lg:col-4 xl:col-4">
             <History />
