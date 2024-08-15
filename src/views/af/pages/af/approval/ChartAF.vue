@@ -11,7 +11,7 @@ const local = ref({
     sign_id: localStorage.getItem('sign_id'),
 });
 
-const props = defineProps(['menuType','updateChart']); 
+const props = defineProps(['menuType','updateChart']);
 watch(() => props.updateChart, async (newValue, oldValue) => {
     // console.log(newValue);
     const labelForChart = newValue.chart.af.labels;

@@ -11,40 +11,33 @@ const local = ref({
 
 const products = ref(null);
 const fetching = async () =>{
-    const response = await axiosManagement.get('/project/list',{ 
+    const response = await axiosManagement.get('/project/chart/revenue',{ 
         params:{
             token: local.value.token,
             user_id: local.value.user_id,
         }
     });
-    console.log(response.data);
-    products.value = response.data.list;
+    
+    products.value = response.data;
+    console.log(products.value)
+
+    
 }
 onMounted( () => {
     fetching();
 });
 
 // chart
-onMounted(() => {
-    chartData.value = setChartData();
-    chartOptions.value = setChartOptions();
-});
-
-const chartData = ref();
-const chartOptions = ref(null);
-
-const setChartData = () => {
-    const documentStyle = getComputedStyle(document.body);
-
+const setChartData = (labelArray, dataArray) => {
     return {
-        labels: ['A', 'B', 'C'],
+        labels: labelArray,
         datasets: [
             {
-                data: [540, 325, 702],
-                backgroundColor: [documentStyle.getPropertyValue('--p-cyan-500'), documentStyle.getPropertyValue('--p-orange-500'), documentStyle.getPropertyValue('--p-gray-500')],
-                hoverBackgroundColor: [documentStyle.getPropertyValue('--p-cyan-400'), documentStyle.getPropertyValue('--p-orange-400'), documentStyle.getPropertyValue('--p-gray-400')]
+                data: dataArray,
+                backgroundColor: ['#88B04B', '#cccccc'],
+                hoverBackgroundColor: ['#88B04B', '#cccccc']
             }
-        ]
+        ],
     };
 };
 
@@ -53,25 +46,28 @@ const setChartOptions = () => {
     const textColor = documentStyle.getPropertyValue('--p-text-color');
 
     return {
+        cutout: '70%', // Mengatur ukuran tengah doughnut
         plugins: {
             legend: {
-                labels: {
-                    cutout: '60%',
-                    color: textColor
-                }
-            }
+                display: false // Menonaktifkan tampilan legenda
+            },
+            tooltip: {
+                enabled: true // Tooltip tetap aktif jika diperlukan
+            },
         }
     };
 };
-
+    
+    
 </script>
 
 <template>
     <div class="card">
         
         <div class="grid">
-            <div class="col-12 sm:col-12 md:col-3 lg:col-3 xl:col-3" >
-                <Chart type="doughnut" :data="chartData" :options="chartOptions" class="w-full md:w-[30rem]" />
+            <div v-for="n in products" class="col-6 sm:col-6 md:col-4 lg:col-3 xl:col-3 text-center" >
+                <span>{{ n.title+' '+n.margin+'%' }}</span>
+                <Chart type="doughnut" :data="setChartData(n.labels, n.dataset)" :options="setChartOptions()" class="w-full md:w-[10rem]" />
             </div>
         </div>
         

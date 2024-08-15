@@ -5,6 +5,8 @@ import { useLayout } from '@/layout/composables/layout';
 import { useRoute } from 'vue-router'
 import { useToast } from 'primevue/usetoast';
 
+import BudgetRequest from './components/BudgetRequest.vue';
+
 import { axiosCpSmart, axiosHR } from '../../../../service/axios';
 
 const toast = useToast();
@@ -31,7 +33,6 @@ const fetching = async () =>{
             user_id: local.value.user_id,
         }
     });
-    console.log(response.data);
     title.value = response.data.project;
     products.value = response.data.list;
 }
@@ -47,11 +48,13 @@ const initFilters = () => {
     };
 };
 
+
 const onUpload = () => {
     toast.add({ severity: 'success', summary: 'Success', detail: 'File Uploaded', life: 3000 });
     fetching();
 };
 
+// download template
 const downloadTemplateBudgetPlan = async () => {
     await axiosCpSmart.get('/budget/plan/template', {
         params:{
@@ -73,9 +76,43 @@ const downloadTemplateBudgetPlan = async () => {
     });
 };
 
+const downloadTemplateRequest = async () => {
+    await axiosCpSmart.get('/budget/request/template/'+local.value.project_id+'/'+local.value.project_name, {
+        params:{
+                
+            },
+        responseType: 'blob', // Menentukan tipe respons sebagai blob (binary large object)
+        
+    })
+    .then(response => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'Template_Request_'+title.value.project_name+'.xlsx'); // Atur nama file sesuai kebutuhan Anda
+      document.body.appendChild(link);
+      link.click();
+    })
+    .catch(error => {
+      console.error(error);
+    });
+};
+
 // formating data
 const formatCurrency = (value) => {
     return value?.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
+};
+
+// expander
+const expandedRows = ref([]);
+const onRowExpand = (event) => {
+};
+const onRowCollapse = (event) => {
+};
+const expandAll = () => {
+    expandedRows.value = products.value.reduce((acc, p) => (acc[p.id] = true) && acc, []);
+};
+const collapseAll = () => {
+    expandedRows.value = null;
 };
 
 
@@ -93,17 +130,22 @@ const formatCurrency = (value) => {
                 <span class="mb-5">Project: {{ title.project }}</span>
 
                 <DataTable
-                    :value="products"
-                    removableSort
+                    v-model:expandedRows="expandedRows"
+                    :value="products" 
+                    dataKey="id"
+                    @rowExpand="onRowExpand" @rowCollapse="onRowCollapse"
                     :paginator="true"
-                    :rows="25"
-                    :filters="filters"
+                    :rows="10"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                    :rowsPerPageOptions="[25, 50, 100]"
+                    :rowsPerPageOptions="[5, 10, 25]"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
-                    responsiveLayout="scroll"
-                    scrollable scrollHeight="500px"
-                    size="small"
+                    resizableColumns 
+                    columnResizeMode="fit"
+                    :filters="filters"
+                    removableSort
+                    sortMode="single" 
+                    sortField="name" 
+                    :sortOrder="1"
                 >
                     <template #header>
                         <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
@@ -119,28 +161,40 @@ const formatCurrency = (value) => {
                                 <Button icon="pi pi-file-excel" severity="success" v-tooltip="'Download Budget Plan Template'" outlined rounded aria-label="Download Tempate" @click="downloadTemplateBudgetPlan()" ></Button>
                             </div>
                             <span>Budget</span>
-                            <span class="block p-input-icon-left">
-                                <i class="pi pi-search" />
-                                <InputText v-model="filters['global'].value" placeholder="Search" type="text" class="w-32 sm:w-auto" style="border-radius: 3rem" />
-                            </span>
+                            <div class="flex flex-wrap justify-end gap-1">
+                                <FileUpload 
+                                    mode="basic" name="file" class="mr-1"
+                                    :url="local.backend_target+'/budget/plan/'+local.project_id+'/'+local.project_name+'/'+local.user_id" 
+                                    accept=".xlsx,.xls" :maxFileSize="10000000" @upload="onUpload" 
+                                    :auto="true"
+                                    v-tooltip="'Upload Request'"
+                                    chooseLabel="Request"
+                                />
+                                <Button icon="pi pi-file-excel" severity="danger" v-tooltip="'Download Request Template'" outlined rounded aria-label="Download Tempate" @click="downloadTemplateRequest()" ></Button>
+                                <Button text icon="pi pi-minus" label="Collapse All" @click="collapseAll" />
+                            </div>
                         </div>
                     </template>
 
-                    <Column header="#" headerStyle="width:1%; min-width:1rem;">
+                    <Column header="#" headerStyle="width: 2%">
                         <template #body="slotProps">
                             <small>{{ slotProps.index + 1 }}</small>
                         </template>
                     </Column>
-                    <Column field="name" header="Name" :sortable="true" headerStyle="width:5%; min-width:5rem;">
+                    <Column expander headerStyle="width: 2%" />
+                    <Column field="name" header="Name" :sortable="true" headerStyle="width: 50%">
                         <template #body="slotProps">
-                            <ColorPicker id="color" v-model="slotProps.data.color"/> <span><small>{{ slotProps.data.name }}</small></span>
+                            <span><small>{{ slotProps.data.name }}</small></span>
                         </template>
                     </Column>
-                    <Column field="value" header="Value" :sortable="true" headerStyle="width:5%; min-width:5rem;">
+                    <Column field="value" header="Value" :sortable="true" headerStyle="width: 50%">
                         <template #body="slotProps">
                             <span><small>{{ formatCurrency(slotProps.data.value) }}</small></span>
                         </template>
                     </Column>
+                    <template #expansion="slotProps">
+                        <BudgetRequest :reference="slotProps.data.name" />
+                    </template>
                     
                 </DataTable>
 

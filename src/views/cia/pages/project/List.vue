@@ -48,12 +48,28 @@ const getSeverity = (status) => {
     }
 };
 
-const calculateCustomerTotal = (name) => {
+const calculateTotalQty = (name) => {
     let total = 0;
     if (products.value) {
         for (let product of products.value) {
             if (product.representative.cust_init === name) {
+                
                 total++;
+
+            }
+        }
+    }
+
+    return total;
+};
+
+const calculateTotal = (name, meta) => {
+    let total = 0;
+    if (products.value) {
+        for (let product of products.value) {
+            if (product.representative.cust_init === name) {
+                
+                total = total + product[meta];
 
             }
         }
@@ -78,8 +94,15 @@ const seeMore = (detail) =>{
 }
 
 // data formulas
-const margin = (detail) =>{
-    
+const margin = (revenue, cost) =>{
+    var percent = 0;
+
+    var totalMargin = revenue - cost;
+    if(totalMargin > 0){
+        percent = (totalMargin / revenue) * 100;
+    }
+
+    return Math.round(percent);
 }
 
 </script>
@@ -88,9 +111,12 @@ const margin = (detail) =>{
     
     <div class="card">
         <DataTable
-            v-model:expandedRowGroups="expandedRowGroups" :value="products" tableStyle="min-width: 50rem"
-                expandableRowGroups rowGroupMode="subheader" groupRowsBy="representative.cust_init"
-                sortMode="single" sortField="representative.cust_init" :sortOrder="1"
+            v-model:expandedRowGroups="expandedRowGroups" 
+            :value="products" 
+            tableStyle="min-width: 50rem"
+            expandableRowGroups rowGroupMode="subheader" groupRowsBy="representative.cust_init"
+            sortMode="single" sortField="representative.cust_init" :sortOrder="1"
+            scrollable scrollHeight="650px"
         >
             <!-- <template #header>
                 <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
@@ -102,7 +128,15 @@ const margin = (detail) =>{
                 </div>
             </template> -->
             <template #groupheader="slotProps">
-                <span class="align-middle ml-2 font-bold leading-normal"><small>{{ slotProps.data.representative.cust_init }}, Total PO: {{ calculateCustomerTotal(slotProps.data.representative.cust_init) }}</small></span>
+                <span class="align-middle ml-2 font-bold leading-normal">
+                    <small>{{ slotProps.data.representative.cust_init }}, 
+                        Total PO: {{ calculateTotalQty(slotProps.data.representative.cust_init) }} 
+                        | Total Nilai: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'po_value')) }}
+                        | Total Revenue: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'revenue')) }}
+                        | Total AF: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'af_total')) }}
+                        | Margin: {{ margin(calculateTotal(slotProps.data.representative.cust_init, 'revenue'), calculateTotal(slotProps.data.representative.cust_init, 'af_total')) }}%
+                    </small>
+                </span>
             </template>
             <Column field="representative.cust_init" header="Customer" :sortable="true" headerStyle="width:20%; min-width:20rem;">
             </Column>
@@ -163,13 +197,13 @@ const margin = (detail) =>{
             <Column field="margin" header="Margin" :sortable="true" headerStyle="width:20%; min-width:15rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Margin</small></span>
-                    <small>{{  }}</small>
+                    <small>{{ formatCurrency(slotProps.data.revenue - slotProps.data.af_total) }}</small>
                 </template>
             </Column>
-            <Column field="margin_percent" header="% Margin" :sortable="true" headerStyle="width:20%; min-width:15rem;">
+            <Column field="margin_percent" header="% Margin" class="text-center" :sortable="true" headerStyle="width:10%; min-width:10rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>% Margin</small></span>
-                    <small>{{  }}</small>
+                    <small>{{ margin(slotProps.data.revenue, slotProps.data.af_total) }}%</small>
                 </template>
             </Column>
             <Column field="hpp_subcon" header="HPP Subcon (in %)" :sortable="true" headerStyle="width:14%; min-width:10rem;">
