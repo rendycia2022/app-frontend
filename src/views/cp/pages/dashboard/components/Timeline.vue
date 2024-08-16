@@ -110,7 +110,7 @@ const checkedConfirm = async () =>{
                 <small><b>{{ slotProps.item.opposite?.date }}</b></small>
             </div>
             <div>
-                <small class="text-surface-500 dark:text-surface-400">{{ slotProps.item.opposite?.title }}</small>
+                <small class="text-surface-500 dark:text-surface-400">Total: {{ slotProps.item.opposite?.title }}</small>
             </div>
         </template>
         <template #content="slotProps">

@@ -21,7 +21,6 @@ const local = ref({
 
 onMounted(() => {
     fetching();
-    
 });
 
 const products = ref(null);
@@ -33,8 +32,16 @@ const fetching = async () =>{
             user_id: local.value.user_id,
         }
     });
-    title.value = response.data.project;
     products.value = response.data.list;
+
+    const project = await axiosCpSmart.get('/dashboard/project/'+local.value.project_id+'/'+local.value.project_name,{ 
+        params:{
+            token: local.value.token,
+            user_id: local.value.user_id,
+        }
+    });
+
+    title.value = project.data
 }
 
 // filter
@@ -77,7 +84,7 @@ const downloadTemplateBudgetPlan = async () => {
 };
 
 const downloadTemplateRequest = async () => {
-    await axiosCpSmart.get('/budget/request/template/'+local.value.project_id+'/'+local.value.project_name, {
+    await axiosCpSmart.get('/budget/request/'+local.value.project_id+'/'+local.value.project_name+'/template/download', {
         params:{
                 
             },
@@ -115,6 +122,11 @@ const collapseAll = () => {
     expandedRows.value = null;
 };
 
+// table style
+const rowClass = (data) => {
+    return [{ 'bg-red-100': data.value < data.total_request }];
+};
+
 
 </script>
 
@@ -146,6 +158,7 @@ const collapseAll = () => {
                     sortMode="single" 
                     sortField="name" 
                     :sortOrder="1"
+                    :rowClass="rowClass"
                 >
                     <template #header>
                         <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
@@ -164,13 +177,14 @@ const collapseAll = () => {
                             <div class="flex flex-wrap justify-end gap-1">
                                 <FileUpload 
                                     mode="basic" name="file" class="mr-1"
-                                    :url="local.backend_target+'/budget/plan/'+local.project_id+'/'+local.project_name+'/'+local.user_id" 
+                                    :url="local.backend_target+'/budget/request/'+local.project_id+'/'+local.project_name+'/'+local.user_id" 
                                     accept=".xlsx,.xls" :maxFileSize="10000000" @upload="onUpload" 
                                     :auto="true"
                                     v-tooltip="'Upload Request'"
                                     chooseLabel="Request"
+                                    :disabled="!products || !products.length"
                                 />
-                                <Button icon="pi pi-file-excel" severity="danger" v-tooltip="'Download Request Template'" outlined rounded aria-label="Download Tempate" @click="downloadTemplateRequest()" ></Button>
+                                <Button icon="pi pi-file-excel" severity="danger" v-tooltip="'Download Request Template'" outlined rounded aria-label="Download Tempate" @click="downloadTemplateRequest()" :disabled="!products || !products.length" ></Button>
                                 <Button text icon="pi pi-minus" label="Collapse All" @click="collapseAll" />
                             </div>
                         </div>
@@ -182,14 +196,24 @@ const collapseAll = () => {
                         </template>
                     </Column>
                     <Column expander headerStyle="width: 2%" />
-                    <Column field="name" header="Name" :sortable="true" headerStyle="width: 50%">
+                    <Column field="name" header="Name" :sortable="true" headerStyle="width: 30%">
                         <template #body="slotProps">
                             <span><small>{{ slotProps.data.name }}</small></span>
                         </template>
                     </Column>
-                    <Column field="value" header="Value" :sortable="true" headerStyle="width: 50%">
+                    <Column field="value" header="Value" :sortable="true" headerStyle="width: 30%">
                         <template #body="slotProps">
                             <span><small>{{ formatCurrency(slotProps.data.value) }}</small></span>
+                        </template>
+                    </Column>
+                    <Column field="total_request" header="Usage" :sortable="true" headerStyle="width: 30%">
+                        <template #body="slotProps">
+                            <span><small>{{ formatCurrency(slotProps.data.total_request) }}</small></span>
+                        </template>
+                    </Column>
+                    <Column field="balance" header="Balance" :sortable="true" headerStyle="width: 30%">
+                        <template #body="slotProps">
+                            <span><small>{{ formatCurrency(slotProps.data.value - slotProps.data.total_request) }}</small></span>
                         </template>
                     </Column>
                     <template #expansion="slotProps">

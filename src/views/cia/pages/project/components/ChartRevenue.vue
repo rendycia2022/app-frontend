@@ -57,7 +57,11 @@ const setChartOptions = () => {
         }
     };
 };
-    
+
+// formating data
+const formatCurrency = (value) => {
+    return value?.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
+};
     
 </script>
 
@@ -67,6 +71,12 @@ const setChartOptions = () => {
         <div class="grid">
             <div v-for="n in products" class="col-6 sm:col-6 md:col-4 lg:col-3 xl:col-3 text-center" >
                 <span>{{ n.title+' '+n.margin+'%' }}</span>
+                <br/>
+                <small 
+                    v-tooltip="'Nilai PO'"
+                >
+                    {{ formatCurrency(n.dataRaw.po_value) }}
+                </small>
                 <Chart type="doughnut" :data="setChartData(n.labels, n.dataset)" :options="setChartOptions()" class="w-full md:w-[10rem]" />
             </div>
         </div>
