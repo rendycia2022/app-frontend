@@ -190,28 +190,28 @@ const rowClass = (data) => {
                         </div>
                     </template>
 
-                    <Column header="#" headerStyle="width: 2%">
+                    <Column header="#" headerStyle="width: 1%">
                         <template #body="slotProps">
                             <small>{{ slotProps.index + 1 }}</small>
                         </template>
                     </Column>
-                    <Column expander headerStyle="width: 2%" />
-                    <Column field="name" header="Name" :sortable="true" headerStyle="width: 30%">
+                    <Column expander headerStyle="width: 1%" />
+                    <Column field="name" header="Name" :sortable="true" headerStyle="width: 10%">
                         <template #body="slotProps">
                             <span><small>{{ slotProps.data.name }}</small></span>
                         </template>
                     </Column>
-                    <Column field="value" header="Value" :sortable="true" headerStyle="width: 30%">
+                    <Column field="value" header="Value" :sortable="true" headerStyle="width: 10%">
                         <template #body="slotProps">
                             <span><small>{{ formatCurrency(slotProps.data.value) }}</small></span>
                         </template>
                     </Column>
-                    <Column field="total_request" header="Usage" :sortable="true" headerStyle="width: 30%">
+                    <Column field="total_request" header="Usage" :sortable="true" headerStyle="width: 10%">
                         <template #body="slotProps">
                             <span><small>{{ formatCurrency(slotProps.data.total_request) }}</small></span>
                         </template>
                     </Column>
-                    <Column field="balance" header="Balance" :sortable="true" headerStyle="width: 30%">
+                    <Column field="balance" header="Balance" :sortable="true" headerStyle="width: 10%">
                         <template #body="slotProps">
                             <span><small>{{ formatCurrency(slotProps.data.value - slotProps.data.total_request) }}</small></span>
                         </template>

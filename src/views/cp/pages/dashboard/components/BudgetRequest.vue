@@ -80,7 +80,7 @@ const formatCurrency = (value) => {
                     
                 </div>
             </template>
-            <Column header="#" headerStyle="width: 2%">
+            <Column header="#" headerStyle="width: 1%">
                 <template #body="slotProps">
                     <small>{{ slotProps.index + 1 }}</small>
                 </template>
@@ -91,13 +91,13 @@ const formatCurrency = (value) => {
                     <small>{{ slotProps.data.date }}</small>
                 </template>
             </Column>
-            <Column field="value" header="Request" :sortable="true" headerStyle="width: 30%">
+            <Column field="value" header="Request" :sortable="true" headerStyle="width: 10%">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Request</small></span>
                     <small>{{ formatCurrency(slotProps.data.value) }}</small>
                 </template>
             </Column>
-            <Column field="remarks" header="Remarks" :sortable="true" headerStyle="width: 30%">
+            <Column field="remarks" header="Remarks" :sortable="true" headerStyle="width: 20%">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Remarks</small></span>
                     <small>{{ slotProps.data.remarks }}</small>

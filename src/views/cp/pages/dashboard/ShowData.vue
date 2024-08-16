@@ -212,6 +212,10 @@ const formatNumber = (value) => {
     return value?.toLocaleString('en-US');
 };
 
+const formatCurrency = (value) => {
+    return value?.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
+};
+
 // utilities
 const link = ref({});
 const seeMore = (detail) =>{
@@ -248,7 +252,7 @@ const openBudget = (detail) =>{
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
             size="small"
             :filters="filters"
-            scrollable scrollHeight="450px"
+            scrollable scrollHeight="600px"
             dataKey="ringspan_id" :metaKeySelection="true"
             class="small-padding-table text-center"
             rowGroupMode="subheader" groupRowsBy="project_name"
@@ -289,16 +293,19 @@ const openBudget = (detail) =>{
                     </span>
                 </template>
             </Column>
-            <Column field="budget" header="Budget" style="min-width: 100px" sortable >
+            <Column field="budget" header="Budget" style="min-width: 300px" sortable >
                 <template #body="slotProps">
-                    <Button 
-                        icon="pi pi-bitcoin" 
-                        severity="success" 
-                        text rounded
-                        size="large"
-                        v-tooltip="'Budget'"
-                        @click="openBudget(slotProps.data)"
+                    <Button
+                        :label="formatCurrency(slotProps.data.budget_plan)" 
+                        class="small-padding-button" @click="openBudget(slotProps.data)" 
+                        severity="success" rounded text size="small"
+                        v-tooltip="'Click to Manage Budget'"
                     />
+                </template>
+            </Column>
+            <Column field="request" header="Request" style="min-width: 300px" sortable >
+                <template #body="slotProps">
+                    <span><small>{{ formatCurrency(slotProps.data.request)}}</small></span>
                 </template>
             </Column>
             <Column field="progress.result" header="Progress" style="min-width: 100px" class="text-center" sortable >
