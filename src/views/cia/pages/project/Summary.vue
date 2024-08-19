@@ -17,7 +17,7 @@ const display = ref({
 <template>
     
     <div class="grid">
-        <div class="col-12 sm:col-12 md:col-6 lg:col-8 xl:col-8">
+        <div class="col-12 sm:col-12 md:col-12 lg:col-12 xl:col-12">
             <ChartRevenue />
         </div>
         <div class="col-12 sm:col-12 md:col-6 lg:col-4 xl:col-4">

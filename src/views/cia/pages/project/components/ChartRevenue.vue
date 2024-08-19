@@ -28,14 +28,14 @@ onMounted( () => {
 });
 
 // chart
-const setChartData = (labelArray, dataArray) => {
+const setChartData = (labelArray, dataArray, dataColor) => {
     return {
         labels: labelArray,
         datasets: [
             {
                 data: dataArray,
-                backgroundColor: ['#88B04B', '#cccccc'],
-                hoverBackgroundColor: ['#88B04B', '#cccccc']
+                backgroundColor: dataColor,
+                hoverBackgroundColor: dataColor
             }
         ],
     };
@@ -46,7 +46,8 @@ const setChartOptions = () => {
     const textColor = documentStyle.getPropertyValue('--p-text-color');
 
     return {
-        cutout: '70%', // Mengatur ukuran tengah doughnut
+        cutout: '60%', // Mengatur ukuran tengah doughnut
+        maintainAspectRatio: false,
         plugins: {
             legend: {
                 display: false // Menonaktifkan tampilan legenda
@@ -62,24 +63,76 @@ const setChartOptions = () => {
 const formatCurrency = (value) => {
     return value?.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
 };
+
+// data formulas
+const margin = (revenue, cost) =>{
+    var percent = 0;
+
+    var totalMargin = revenue - cost;
+    if(totalMargin > 0){
+        percent = (totalMargin / revenue) * 100;
+    }
+
+    return Math.round(percent);
+}
+
+// Carousel
+const responsiveOptions = ref([
+    {
+        breakpoint: '1400px',
+        numVisible: 2,
+        numScroll: 1
+    },
+    {
+        breakpoint: '1199px',
+        numVisible: 3,
+        numScroll: 1
+    },
+    {
+        breakpoint: '767px',
+        numVisible: 2,
+        numScroll: 1
+    },
+    {
+        breakpoint: '575px',
+        numVisible: 1,
+        numScroll: 1
+    }
+]);
     
 </script>
 
 <template>
     <div class="card">
         
-        <div class="grid">
-            <div v-for="n in products" class="col-6 sm:col-6 md:col-4 lg:col-3 xl:col-3 text-center" >
-                <span>{{ n.title+' '+n.margin+'%' }}</span>
-                <br/>
-                <small 
-                    v-tooltip="'Nilai PO'"
-                >
-                    {{ formatCurrency(n.dataRaw.po_value) }}
-                </small>
-                <Chart type="doughnut" :data="setChartData(n.labels, n.dataset)" :options="setChartOptions()" class="w-full md:w-[10rem]" />
-            </div>
-        </div>
+        <Carousel :value="products" :numVisible="4" :numScroll="1" :responsiveOptions="responsiveOptions">
+            <template #item="slotProps">
+                <div class="mr-2">
+                    <div class="p-3 flex flex-column border-200 pricing-card cursor-pointer border-2 hover:border-green-500 transition-duration-300 transition-all" style="border-radius: 10px">
+                        <h5 class="text-center" :style="{ color: slotProps.data.color }">{{ slotProps.data.title }}</h5>
+                        <div class="mb-5 text-center">
+                            <span class="text-600 mr-2">Nilai PO</span>
+                            <span class="text-small font-bold">{{ formatCurrency(slotProps.data.dataRaw.po_value) }}</span>
+                        </div>
+                        <Chart type="doughnut" :data="setChartData(slotProps.data.labels, slotProps.data.dataset, slotProps.data.datasetColor)" :options="setChartOptions()" class="h-10rem mb-2" />
+                        <div class="mb-5 text-center">
+                            <span class="text-small font-bold mr-2" :style="{ color: slotProps.data.color }">{{ slotProps.data.margin }}%</span>
+                            <span class="text-600 ">In progress </span>
+                        </div>
+                        <Divider class="w-full bg-surface-200"></Divider>
+                        <ul class="mb-5 list-none p-0 flex text-900 flex-column">
+                            <li class="py-2">
+                                <span class="text-md line-height-3" >Margin: <b :style="{ color: slotProps.data.color }">{{ margin(slotProps.data.dataRaw.revenue, slotProps.data.dataRaw.af_total) }}%</b></span>
+                            </li>
+                            <li class="py-2">
+                                <span class="text-md line-height-3" >Total Cost: <b :style="{ color: slotProps.data.color }">{{ formatCurrency(slotProps.data.dataRaw.af_total) }}</b></span>
+                            </li>
+                        </ul>
+                        
+                    </div>
+                </div>
+            </template>
+        </Carousel>
         
     </div>
 </template>

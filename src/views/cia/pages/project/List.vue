@@ -131,9 +131,9 @@ const margin = (revenue, cost) =>{
                 <span class="align-middle ml-2 font-bold leading-normal">
                     <small>{{ slotProps.data.representative.cust_init }}, 
                         Total PO: {{ calculateTotalQty(slotProps.data.representative.cust_init) }} 
-                        | Total Nilai: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'po_value')) }}
+                        | Total Nilai PO: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'po_value')) }}
                         | Total Revenue: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'revenue')) }}
-                        | Total AF: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'af_total')) }}
+                        | Total Cost: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'af_total')) }}
                         | Margin: {{ margin(calculateTotal(slotProps.data.representative.cust_init, 'revenue'), calculateTotal(slotProps.data.representative.cust_init, 'af_total')) }}%
                     </small>
                 </span>
@@ -170,9 +170,9 @@ const margin = (revenue, cost) =>{
                     <small>{{ formatCurrency(slotProps.data.revenue) }}</small>
                 </template>
             </Column>
-            <Column field="af_total" header="Total AF" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+            <Column field="af_total" header="Total Cost" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
-                    <span class="p-column-title text-xs"><small>Total AF</small></span>
+                    <span class="p-column-title text-xs"><small>Total Cost</small></span>
                     <small>{{ formatCurrency(slotProps.data.af_total) }}</small>
                 </template>
             </Column>
