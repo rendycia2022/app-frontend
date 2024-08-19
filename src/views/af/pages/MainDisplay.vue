@@ -6,6 +6,7 @@ import DataApproval from './af/approval/Data.vue';
 import ChartAF from './af/approval/ChartAF.vue';
 import ChartOverhead from './af/approval/ChartOverhead.vue';
 import ChartProject from './af/approval/ChartProject.vue';
+import ChartPO from './af/approval/ChartPO.vue';
 
 const newDataChart = ref(null)
 const updateChart = (dataChart) => {
@@ -37,7 +38,16 @@ const selectedChartStackProject = (selectedDataStackProject) =>{
     </div>
     
     <div class="mb-4">
-        <ChartProject menuType="0" :updateChart="newDataChart" @selectedDataStackProject="selectedChartStackProject" />
+        <div class="card">
+            <TabView>
+                <TabPanel header="PO">
+                    <ChartPO menuType="0" :updateChart="newDataChart" @selectedDataStackProject="selectedChartStackProject" />
+                </TabPanel>
+                <TabPanel header="Project">
+                    <ChartProject menuType="0" :updateChart="newDataChart" @selectedDataStackProject="selectedChartStackProject" />
+                </TabPanel>
+            </TabView>
+        </div>
     </div>
 
     <Toolbar class="mb-4">
