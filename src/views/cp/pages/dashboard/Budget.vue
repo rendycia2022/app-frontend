@@ -24,6 +24,7 @@ onMounted(() => {
 });
 
 const products = ref(null);
+const product = ref({});
 const title = ref({});
 const fetching = async () =>{
     const response = await axiosCpSmart.get('/budget/plan/'+local.value.project_id+'/'+local.value.project_name,{ 
@@ -127,6 +128,25 @@ const rowClass = (data) => {
     return [{ 'bg-red-100': data.value < data.total_request }];
 };
 
+// delete record
+const deleteProductDialog = ref(false);
+const confirmDeleteProduct = (editProduct) => {
+    product.value = editProduct;
+    deleteProductDialog.value = true;
+};
+
+const deleteProduct = async () =>{
+    const response = await axiosCpSmart.delete('/budget/plan/'+product.value.id+'/'+local.value.user_id);
+    if(response.data.status == 200){
+        fetching();
+        deleteProductDialog.value = false;
+        product.value = {};
+        toast.add({ severity: 'warn', summary: 'Attention!', detail: response.data.message, life: 3000 });
+    }else{
+        toast.add({ severity: 'danger', summary: 'Warning', detail: response.data.message, life: 3000 });
+    }
+};
+
 
 </script>
 
@@ -216,16 +236,36 @@ const rowClass = (data) => {
                             <span><small>{{ formatCurrency(slotProps.data.value - slotProps.data.total_request) }}</small></span>
                         </template>
                     </Column>
+                    <Column headerStyle="width: 2%">
+                        <template #body="slotProps">
+                            <Button 
+                                icon="pi pi-trash" class="p-button-rounded p-button-warning mt-2" 
+                                @click="confirmDeleteProduct(slotProps.data)" 
+                                :disabled="slotProps.data.total_request > 0"
+                            />
+                        </template>
+                    </Column>
                     <template #expansion="slotProps">
                         <BudgetRequest :reference="slotProps.data.name" />
                     </template>
                     
                 </DataTable>
-
-                
             </div>
         </div>
     </div>
+    <Dialog v-model:visible="deleteProductDialog" :style="{ width: '550px' }" header="Confirm" :modal="true">
+        <div class="flex align-items-center justify-content-center">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+            <span v-if="product"
+                >Are you sure you want to delete <b>{{ product.name }}</b
+                >?</span
+            >
+        </div>
+        <template #footer>
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteProductDialog = false" />
+            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteProduct" />
+        </template>
+    </Dialog>
 
 </template>
 

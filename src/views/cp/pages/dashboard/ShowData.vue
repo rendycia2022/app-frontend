@@ -293,7 +293,7 @@ const openBudget = (detail) =>{
                     </span>
                 </template>
             </Column>
-            <Column field="budget" header="Budget" style="min-width: 300px" sortable >
+            <Column field="budget" header="Budget" style="min-width: 200px" sortable >
                 <template #body="slotProps">
                     <Button
                         :label="formatCurrency(slotProps.data.budget_plan)" 
@@ -303,7 +303,7 @@ const openBudget = (detail) =>{
                     />
                 </template>
             </Column>
-            <Column field="request" header="Request" style="min-width: 300px" sortable >
+            <Column field="request" header="Request" style="min-width: 200px" sortable >
                 <template #body="slotProps">
                     <span><small>{{ formatCurrency(slotProps.data.request)}}</small></span>
                 </template>

@@ -20,6 +20,7 @@ const local = ref({
 const props = defineProps(['reference']); 
 
 const products = ref(null);
+const product = ref({});
 const fetching = async () =>{
     const response = await axiosCpSmart.get('/budget/request/'+local.value.project_id+'/'+local.value.project_name+'/'+props.reference,{ 
         params:{
@@ -33,6 +34,23 @@ const fetching = async () =>{
 onMounted(() => {
     fetching();
 });
+
+// delete record
+const deleteProductDialog = ref(false);
+const confirmDeleteProduct = (editProduct) => {
+    product.value = editProduct;
+    deleteProductDialog.value = true;
+};
+
+const deleteProduct = async () =>{
+    const response = await axiosCpSmart.delete('/budget/request/'+product.value.id+'/'+local.value.user_id);
+    if(response.data.status == 200){
+        fetching();
+        deleteProductDialog.value = false;
+        product.value = {};
+        toast.add({ severity: 'warn', summary: 'Attention!', detail: 'Request Deleted', life: 3000 });
+    }
+};
 
 // filter
 const filters = ref({});
@@ -103,8 +121,26 @@ const formatCurrency = (value) => {
                     <small>{{ slotProps.data.remarks }}</small>
                 </template>
             </Column>
+            <Column headerStyle="width: 2%">
+                <template #body="slotProps">
+                    <Button icon="pi pi-trash" class="p-button-rounded p-button-warning mt-2" @click="confirmDeleteProduct(slotProps.data)" />
+                </template>
+            </Column>
         </DataTable>
     </div>
+    <Dialog v-model:visible="deleteProductDialog" :style="{ width: '550px' }" header="Confirm" :modal="true">
+        <div class="flex align-items-center justify-content-center">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+            <span v-if="product"
+                >Are you sure you want to delete <b>{{ formatCurrency(product.value) }}</b
+                > in {{ product.date }}?</span
+            >
+        </div>
+        <template #footer>
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteProductDialog = false" />
+            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteProduct" />
+        </template>
+    </Dialog>
 </template>
 
 <style lang="scss" scoped>
