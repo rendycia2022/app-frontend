@@ -25,6 +25,11 @@ const newSelectedDataChartStackProject = ref(null);
 const selectedChartStackProject = (selectedDataStackProject) =>{
     newSelectedDataChartStackProject.value = selectedDataStackProject;
 };
+
+const newSelectedDataChartStackPO = ref(null);
+const selectedChartStackPO = (selectedDataStackPO) =>{
+    newSelectedDataChartStackPO.value = selectedDataStackPO;
+};
 </script>
 
 <template>
@@ -41,7 +46,7 @@ const selectedChartStackProject = (selectedDataStackProject) =>{
         <div class="card">
             <TabView>
                 <TabPanel header="PO">
-                    <ChartPO menuType="0" :updateChart="newDataChart" @selectedDataStackProject="selectedChartStackProject" />
+                    <ChartPO menuType="0" :updateChart="newDataChart" @selectedDataStackPO="selectedChartStackPO" />
                 </TabPanel>
                 <TabPanel header="Project">
                     <ChartProject menuType="0" :updateChart="newDataChart" @selectedDataStackProject="selectedChartStackProject" />
@@ -74,5 +79,6 @@ const selectedChartStackProject = (selectedDataStackProject) =>{
         :selectedChart="newSelectedDataChart" 
         :selectedChartStack="newSelectedDataChartStack" 
         :selectedChartStackProject="newSelectedDataChartStackProject"
+        :selectedChartStackPO="newSelectedDataChartStackPO"
     />
 </template>

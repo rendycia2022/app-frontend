@@ -12,7 +12,14 @@ const toast = useToast();
 const display = ref({
     height: '630px',
 });
-const props = defineProps(['menuType','sortList','selectedChart','selectedChartStack','selectedChartStackProject']);
+const props = defineProps([
+    'menuType',
+    'sortList',
+    'selectedChart',
+    'selectedChartStack',
+    'selectedChartStackProject',
+    'selectedChartStackPO'
+]);
 const emit = defineEmits(['dataChart']); 
 
 // filter
@@ -57,6 +64,7 @@ const fetch = async() =>{
         originalProducts.value = response.data.metadata.list;
         emit('dataChart', response.data.metadata);
     } 
+    console.log(originalProducts.value)
 }
 
 // chart selected
@@ -115,6 +123,44 @@ watch(() => props.selectedChartStackProject, async (newValue, oldValue) => {
 },{ deep: true });
 
 const updateDataFromStackChartProject = (DateSelected)=>{
+    console.log(DateSelected)
+    var selectedLabel = DateSelected.label;
+    var stackIndex = DateSelected.datasetLabel;
+    var title = DateSelected.title;
+    
+    products.value = originalProducts.value;
+    DataDummy.value = [];
+
+    for (let i = 0; i < products.value.length; i++) {
+        var productDate = dateFormating(products.value[i].date);
+        if (productDate == selectedLabel) {
+            var itemList = products.value[i].item_list;
+            if(stackIndex == 'total'){
+                for(let j=0; j < itemList.length; j++){
+                    if(itemList[j].project.name == title){
+                        DataDummy.value.push(products.value[i]);
+                    }
+                }
+            }else{
+                for(let j=0; j < itemList.length; j++){
+                    if(itemList[j].project.name == title){
+                        if(itemList[j].cost_type_label == stackIndex){
+                            DataDummy.value.push(products.value[i]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    products.value = DataDummy.value;
+}
+
+// chart stack selected project
+watch(() => props.selectedChartStackProject, async (newValue, oldValue) => {
+    updateDataFromStackChartPO(newValue)
+},{ deep: true });
+
+const updateDataFromStackChartPO = (DateSelected)=>{
     console.log(DateSelected)
     var selectedLabel = DateSelected.label;
     var stackIndex = DateSelected.datasetLabel;

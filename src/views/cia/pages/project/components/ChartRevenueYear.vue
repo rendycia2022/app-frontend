@@ -10,19 +10,19 @@ const local = ref({
 });
 
 const products = ref(null);
-const originalProducts = ref(null);
-const fetching = async () =>{
-    const response = await axiosManagement.get('/project/chart/revenue',{ 
+const fetching = async (year) =>{
+    const response = await axiosManagement.get('/project/chart/revenue/'+year,{ 
         params:{
             token: local.value.token,
             user_id: local.value.user_id,
         }
     });
+    
     products.value = response.data;
+    
 }
-
 onMounted( () => {
-    fetching();
+    fetching(selectedYear.value);
 });
 
 // chart
@@ -97,12 +97,18 @@ const responsiveOptions = ref([
         numScroll: 1
     }
 ]);
-    
+
+// selected year
+const selectedYear = ref(2024);
+const years = ref([2024,2023,2022]);
+watch(() => selectedYear.value, async (newValue, oldValue) => {
+    fetching(newValue)
+});
 </script>
 
 <template>
     <div class="card">
-        <h5>Data periode tahun 2022 sampai July 2024 </h5>
+        <Dropdown v-model="selectedYear" :options="years" placeholder="Select a year" class="w-100 mb-5"></Dropdown>
         <Carousel :value="products" :numVisible="4" :numScroll="1" :responsiveOptions="responsiveOptions">
             <template #item="slotProps">
                 <div class="mr-2">
@@ -120,7 +126,7 @@ const responsiveOptions = ref([
                         <Divider class="w-full bg-surface-200"></Divider>
                         <ul class="mb-5 list-none p-0 flex text-900 flex-column">
                             <li class="py-2">
-                                <span class="text-md line-height-3" >Margin: <b :style="{ color: slotProps.data.color }">{{ margin(slotProps.data.dataRaw.revenue, slotProps.data.dataRaw.af_total) }}%</b></span>
+                                <span class="text-md line-height-3" >Margin: <b :style="{ color: slotProps.data.color }">{{ margin(slotProps.data.dataRaw.po_value, slotProps.data.dataRaw.af_total) }}%</b></span>
                             </li>
                             <li class="py-2">
                                 <span class="text-md line-height-3" >Total Cost: <b :style="{ color: slotProps.data.color }">{{ formatCurrency(slotProps.data.dataRaw.af_total) }}</b></span>
@@ -134,6 +140,7 @@ const responsiveOptions = ref([
                                 <Chip v-else class="mr-2 text-900 bg-orange-100" label="0 PO Close" />
                             </li>
                         </ul>
+                        
                     </div>
                 </div>
             </template>

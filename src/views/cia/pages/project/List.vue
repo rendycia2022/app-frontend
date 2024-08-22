@@ -18,7 +18,7 @@ const fetching = async () =>{
             user_id: local.value.user_id,
         }
     });
-    console.log(response.data);
+    // console.log(response.data);
     products.value = response.data.list;
 }
 onMounted( () => {
@@ -56,6 +56,22 @@ const calculateTotalQty = (name) => {
                 
                 total++;
 
+            }
+        }
+    }
+
+    return total;
+};
+
+const calculateTotalQtyStatus = (name, meta) => {
+    let total = 0;
+    if (products.value) {
+        for (let product of products.value) {
+            if (product.representative.cust_init === name) {
+                
+                if(product.status == meta){
+                    total++;
+                }
             }
         }
     }
@@ -105,6 +121,23 @@ const margin = (revenue, cost) =>{
     return Math.round(percent);
 }
 
+// edit data
+const onCellEditComplete = async (event) => {
+    let { data, newValue, field } = event;
+    data[field] = newValue;
+    data['token'] = local.value.token;
+    data['user_id'] = local.value.user_id;
+    const response = await axiosManagement.post('/project/list/remarks', data);
+    if(response.data.status == 200){
+        fetching();  
+    }   
+};
+
+const handleEnterKey = (event) =>{
+    // Prevents Enter key from submitting the form and instead adds a new line
+    event.stopPropagation();
+};
+
 </script>
 
 <template>
@@ -116,25 +149,31 @@ const margin = (revenue, cost) =>{
             tableStyle="min-width: 50rem"
             expandableRowGroups rowGroupMode="subheader" groupRowsBy="representative.cust_init"
             sortMode="single" sortField="representative.cust_init" :sortOrder="1"
-            scrollable scrollHeight="650px"
+            scrollable scrollHeight="720px"
+            :filters="filters"
+            removableSort
+            editMode="cell" 
+            @cell-edit-complete="onCellEditComplete" 
+            tableClass="editable-cells-table"
         >
-            <!-- <template #header>
+            <template #header>
                 <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-                    <h5 class="m-0">Project by Purchase Order</h5>
                     <span class="block mt-2 md:mt-0 p-input-icon-left">
                         <i class="pi pi-search" />
                         <InputText v-model="filters['global'].value" placeholder="Search..." />
                     </span>
                 </div>
-            </template> -->
+            </template>
             <template #groupheader="slotProps">
                 <span class="align-middle ml-2 font-bold leading-normal">
                     <small>{{ slotProps.data.representative.cust_init }}, 
-                        Total PO: {{ calculateTotalQty(slotProps.data.representative.cust_init) }} 
-                        | Total Nilai PO: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'po_value')) }}
+                        Total Nilai PO: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'po_value')) }}
                         | Total Revenue: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'revenue')) }}
                         | Total Cost: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'af_total')) }}
                         | Margin: {{ margin(calculateTotal(slotProps.data.representative.cust_init, 'revenue'), calculateTotal(slotProps.data.representative.cust_init, 'af_total')) }}%
+                        | Total PO: {{ calculateTotalQty(slotProps.data.representative.cust_init) }}
+                        | Open: {{ calculateTotalQtyStatus(slotProps.data.representative.cust_init, 'Open') }}
+                        | Close: {{ calculateTotalQtyStatus(slotProps.data.representative.cust_init, 'Close') }}
                     </small>
                 </span>
             </template>
@@ -150,6 +189,15 @@ const margin = (revenue, cost) =>{
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Status</small></span>
                     <Tag :value="slotProps.data.status" :severity="getSeverity(slotProps.data.status)" />
+                </template>
+            </Column>
+            <Column field="remarks" header="Remarks" style="min-width: 200px" :sortable="true" >
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>Remarks</small></span>
+                    <Textarea v-model="slotProps.data.remarks" rows="1" cols="30" readonly />
+                </template>
+                <template #editor="{ data, field }">
+                    <Textarea v-model="data[field]" @keydown.enter="handleEnterKey" rows="5" cols="30" placeholder="Remarks..." />
                 </template>
             </Column>
             <Column field="no_document" header="Purchase Order" :sortable="true" headerStyle="width:20%; min-width:20rem;">
