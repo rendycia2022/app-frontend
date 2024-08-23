@@ -53,7 +53,9 @@ const setChartOptions = (chartTitle) => {
                 }
             },
             title: {
-                display: false
+                display: false,
+                text: chartTitle, // judul chart
+                fontSize: 16 // ukuran font judul
             },
         },
         scales: {
@@ -79,9 +81,10 @@ const setChartOptions = (chartTitle) => {
     };
 }
 
-const emit = defineEmits(['selectedDataStackProject']);
+const emit = defineEmits(['selectedChartStackPO']);
 const dataset = ref({});
 const handleChartSelect = (chartData, chartOptions, event) =>{
+
     var title = chartOptions.plugins.title.text;
     dataset.value.title = title;
 
@@ -93,8 +96,8 @@ const handleChartSelect = (chartData, chartOptions, event) =>{
 
     var datasetLabel = chartData.datasets[datasetIndex].label;
     dataset.value.datasetLabel = datasetLabel;
-
-    emit('selectedDataStackProject', dataset.value);
+    
+    emit('selectedChartStackPO', dataset.value);
 }
 
 // date builder

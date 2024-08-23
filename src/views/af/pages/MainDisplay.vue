@@ -46,7 +46,7 @@ const selectedChartStackPO = (selectedDataStackPO) =>{
         <div class="card">
             <TabView>
                 <TabPanel header="PO">
-                    <ChartPO menuType="0" :updateChart="newDataChart" @selectedDataStackPO="selectedChartStackPO" />
+                    <ChartPO menuType="0" :updateChart="newDataChart" @selectedDataStackPO="selectedChartStackPO"  />
                 </TabPanel>
                 <TabPanel header="Project">
                     <ChartProject menuType="0" :updateChart="newDataChart" @selectedDataStackProject="selectedChartStackProject" />
