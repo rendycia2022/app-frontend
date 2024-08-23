@@ -93,7 +93,7 @@ const margin = (revenue, cost) =>{
             <Column field="margin" header="Margin" style="min-width: 10px" :sortable="true" >
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Margin</small></span>
-                    <small>{{ margin(slotProps.data.dataRaw.revenue, slotProps.data.dataRaw.af_total) }}%</small>
+                    <small>{{ margin(slotProps.data.dataRaw.po_value, slotProps.data.dataRaw.af_total) }}%</small>
                 </template>
             </Column>
             <Column field="status.total_po" header="Total PO" style="min-width: 10px" :sortable="true" >

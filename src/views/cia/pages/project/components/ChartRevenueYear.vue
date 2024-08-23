@@ -107,8 +107,14 @@ watch(() => selectedYear.value, async (newValue, oldValue) => {
 </script>
 
 <template>
-    <div class="card">
-        <Dropdown v-model="selectedYear" :options="years" placeholder="Select a year" class="w-100 mb-5"></Dropdown>
+    <div class="card p-fluid">
+        <div class="field grid">
+            <label for="name3" class="ml-5 mr-2"><b>Data periode:</b></label>
+            <div class="">
+                <Dropdown v-model="selectedYear" :options="years" placeholder="Select a year" class="w-100"></Dropdown>
+            </div>
+        </div>
+        
         <Carousel :value="products" :numVisible="4" :numScroll="1" :responsiveOptions="responsiveOptions">
             <template #item="slotProps">
                 <div class="mr-2">

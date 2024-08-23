@@ -35,6 +35,7 @@ const display = ref({
         <div class="col-12 sm:col-12 md:col-12 lg:col-12 xl:col-12">
             <List />
         </div>
+        <ScrollTop />
         <!-- <div class="col-12 sm:col-12 md:col-6 lg:col-4 xl:col-4">
             <History />
         </div> -->

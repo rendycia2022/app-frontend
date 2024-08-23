@@ -27,6 +27,7 @@ onMounted( () => {
     fetching();
 });
 
+// calculate
 const calculateTotal = (meta) => {
     let total = 0;
     if (products.value) {
@@ -38,6 +39,17 @@ const calculateTotal = (meta) => {
 
     return total;
 };
+
+const margin = (revenue, cost) =>{
+    var percent = 0;
+
+    var totalMargin = revenue - cost;
+    if(totalMargin > 0){
+        percent = (totalMargin / revenue) * 100;
+    }
+
+    return Math.round(percent);
+}
 
 // formating data
 const formatCurrency = (value) => {
@@ -68,7 +80,7 @@ const formatCurrency = (value) => {
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-5">
                     <div>
-                        <span class="block text-500 font-medium mb-3">Total Nilai PO</span>
+                        <span class="block text-500 font-medium mb-3">Nilai PO</span>
                         <div class="text-900 font-medium text-xl">{{ formatCurrency(calculateTotal('po_value')) }}</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-red-100 border-round" style="width: 2.5rem; height: 2.5rem">
@@ -76,7 +88,37 @@ const formatCurrency = (value) => {
                     </div>
                 </div>
                 <span class="text-green-500 font-medium mr-1">{{ formatCurrency(calculateTotal('revenue')) }}</span>
-                <span class="text-500">revenue</span>
+                <span class="text-500">nilai revenue</span>
+            </div>
+        </div>
+        <div class="col-12 lg:col-6 xl:col-3">
+            <div class="card mb-0">
+                <div class="flex justify-content-between mb-5">
+                    <div>
+                        <span class="block text-500 font-medium mb-3">Margin</span>
+                        <div class="text-900 font-medium text-xl">{{ margin(calculateTotal('po_value'), calculateTotal('af_total')) }}%</div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width: 2.5rem; height: 2.5rem">
+                        <i class="pi pi-percentage text-blue-500 text-xl"></i>
+                    </div>
+                </div>
+                <span class="text-red-500 font-medium mr-1">{{ formatCurrency(calculateTotal('af_total')) }}</span>
+                <span class="text-500">nilai cost</span>
+            </div>
+        </div>
+        <div class="col-12 lg:col-6 xl:col-3">
+            <div class="card mb-0">
+                <div class="flex justify-content-between mb-5">
+                    <div>
+                        <span class="block text-500 font-medium mb-3">Progress</span>
+                        <div class="text-900 font-medium text-xl">{{ Math.round( (calculateTotal('revenue') / calculateTotal('po_value'))*100 ) }}%</div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center bg-yellow-100 border-round" style="width: 2.5rem; height: 2.5rem">
+                        <i class="pi pi-hourglass text-yellow-500 text-xl"></i>
+                    </div>
+                </div>
+                <span class="text-yellow-500 font-medium mr-1">{{ formatCurrency(calculateTotal('po_value') - calculateTotal('revenue')) }}</span>
+                <span class="text-500">sisa Nilai PO</span>
             </div>
         </div>
     </div>

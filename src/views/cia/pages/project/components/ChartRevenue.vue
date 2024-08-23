@@ -120,7 +120,7 @@ const responsiveOptions = ref([
                         <Divider class="w-full bg-surface-200"></Divider>
                         <ul class="mb-5 list-none p-0 flex text-900 flex-column">
                             <li class="py-2">
-                                <span class="text-md line-height-3" >Margin: <b :style="{ color: slotProps.data.color }">{{ margin(slotProps.data.dataRaw.revenue, slotProps.data.dataRaw.af_total) }}%</b></span>
+                                <span class="text-md line-height-3" >Margin: <b :style="{ color: slotProps.data.color }">{{ margin(slotProps.data.dataRaw.po_value, slotProps.data.dataRaw.af_total) }}%</b></span>
                             </li>
                             <li class="py-2">
                                 <span class="text-md line-height-3" >Total Cost: <b :style="{ color: slotProps.data.color }">{{ formatCurrency(slotProps.data.dataRaw.af_total) }}</b></span>

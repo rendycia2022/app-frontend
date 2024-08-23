@@ -170,7 +170,7 @@ const handleEnterKey = (event) =>{
                         Total Nilai PO: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'po_value')) }}
                         | Total Revenue: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'revenue')) }}
                         | Total Cost: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'af_total')) }}
-                        | Margin: {{ margin(calculateTotal(slotProps.data.representative.cust_init, 'revenue'), calculateTotal(slotProps.data.representative.cust_init, 'af_total')) }}%
+                        | Margin: {{ margin(calculateTotal(slotProps.data.representative.cust_init, 'po_value'), calculateTotal(slotProps.data.representative.cust_init, 'af_total')) }}%
                         | Total PO: {{ calculateTotalQty(slotProps.data.representative.cust_init) }}
                         | Open: {{ calculateTotalQtyStatus(slotProps.data.representative.cust_init, 'Open') }}
                         | Close: {{ calculateTotalQtyStatus(slotProps.data.representative.cust_init, 'Close') }}
@@ -245,13 +245,13 @@ const handleEnterKey = (event) =>{
             <Column field="margin" header="Margin" :sortable="true" headerStyle="width:20%; min-width:15rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Margin</small></span>
-                    <small>{{ formatCurrency(slotProps.data.revenue - slotProps.data.af_total) }}</small>
+                    <small>{{ formatCurrency(slotProps.data.po_value - slotProps.data.af_total) }}</small>
                 </template>
             </Column>
             <Column field="margin_percent" header="% Margin" class="text-center" :sortable="true" headerStyle="width:10%; min-width:10rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>% Margin</small></span>
-                    <small>{{ margin(slotProps.data.revenue, slotProps.data.af_total) }}%</small>
+                    <small>{{ margin(slotProps.data.po_value, slotProps.data.af_total) }}%</small>
                 </template>
             </Column>
             <Column field="hpp_subcon" header="HPP Subcon (in %)" :sortable="true" headerStyle="width:14%; min-width:10rem;">
