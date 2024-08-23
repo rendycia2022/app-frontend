@@ -4,6 +4,9 @@ import { onMounted, reactive, ref, watch, onBeforeMount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { axiosManagement } from '../../../../service/axios';
 
+// components
+import IndirectList from './components/IndirectList.vue';
+
 const local = ref({
     user_id: localStorage.getItem('userId'),
     token: localStorage.getItem('token'),
@@ -143,6 +146,21 @@ const rowClass = (data) => {
     return [{ 'bg-red-100 ': data.indirect > data.af_total }];
 };
 
+// dialog
+const product = ref({});
+const closeDialog = (dialog) =>{
+    dialog = false;
+    fetching();
+    product.value = {};
+}
+
+const indirectDialog = ref(false);
+const openIndirectDialog = (detail) => {
+    product.value = detail;
+    indirectDialog.value = true;
+    // console.log(product.value)
+};
+
 </script>
 
 <template>
@@ -239,7 +257,7 @@ const rowClass = (data) => {
             <Column field="indirect" header="Indirect" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Indirect</small></span>
-                    <small>{{ formatCurrency(slotProps.data.indirect) }}</small>
+                    <Button :label="formatCurrency(slotProps.data.indirect).toString()" class="small-padding-button" @click="openIndirectDialog(slotProps.data)" rounded text size="small"  />
                 </template>
             </Column>
             <Column field="cogs" header="COGS" :sortable="true" headerStyle="width:14%; min-width:10rem;">
@@ -276,6 +294,15 @@ const rowClass = (data) => {
         </DataTable>
     </div>
 
+    <Dialog 
+        v-model:visible="indirectDialog" 
+        maximizable modal 
+        :header="'List AF for '+product.no_document" 
+        :style="{ width: '100rem' }"
+        @after-hide="closeDialog(indirectDialog)"
+    >
+        <IndirectList :params="product" />
+    </Dialog>
     
 </template>
 <style lang="scss" scoped>
