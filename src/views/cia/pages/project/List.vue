@@ -138,6 +138,11 @@ const handleEnterKey = (event) =>{
     event.stopPropagation();
 };
 
+// row style conditional
+const rowClass = (data) => {
+    return [{ 'bg-red-100 ': data.indirect > data.af_total }];
+};
+
 </script>
 
 <template>
@@ -155,6 +160,7 @@ const handleEnterKey = (event) =>{
             editMode="cell" 
             @cell-edit-complete="onCellEditComplete" 
             tableClass="editable-cells-table"
+            :rowClass="rowClass"
         >
             <template #header>
                 <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
@@ -224,16 +230,16 @@ const handleEnterKey = (event) =>{
                     <small>{{ formatCurrency(slotProps.data.af_total) }}</small>
                 </template>
             </Column>
-            <Column field="resources" header="Resources" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+            <Column field="direct" header="Direct" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
-                    <span class="p-column-title text-xs"><small>Resources</small></span>
+                    <span class="p-column-title text-xs"><small>Direct</small></span>
                     <small></small>
                 </template>
             </Column>
             <Column field="indirect" header="Indirect" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Indirect</small></span>
-                    <small></small>
+                    <small>{{ formatCurrency(slotProps.data.indirect) }}</small>
                 </template>
             </Column>
             <Column field="cogs" header="COGS" :sortable="true" headerStyle="width:14%; min-width:10rem;">
@@ -267,10 +273,10 @@ const handleEnterKey = (event) =>{
                 </template>
             </Column>
             
-            
         </DataTable>
     </div>
 
+    
 </template>
 <style lang="scss" scoped>
 .small-padding-button {
