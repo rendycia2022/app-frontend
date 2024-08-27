@@ -21,7 +21,7 @@ const fetching = async () =>{
             user_id: local.value.user_id,
         }
     });
-    // console.log(response.data);
+    console.log(response.data);
     products.value = response.data.list;
 }
 onMounted( () => {
@@ -146,6 +146,13 @@ const rowClass = (data) => {
     return [{ 'bg-red-100 ': data.indirect > data.af_total }];
 };
 
+const textAreaNewLineCount = (text) =>{
+    var lines = text.split(/\r|\r\n|\n/);
+    var count = lines.length;
+
+    return count;
+}
+
 // dialog
 const product = ref({});
 const closeDialog = (dialog) =>{
@@ -218,16 +225,22 @@ const openIndirectDialog = (detail) => {
             <Column field="remarks" header="Remarks" style="min-width: 200px" :sortable="true" >
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Remarks</small></span>
-                    <Textarea v-model="slotProps.data.remarks" rows="1" cols="30" readonly />
+                    <Textarea v-model="slotProps.data.remarks" :rows="textAreaNewLineCount(slotProps.data.remarks)" cols="30" readonly />
                 </template>
                 <template #editor="{ data, field }">
                     <Textarea v-model="data[field]" @keydown.enter="handleEnterKey" rows="5" cols="30" placeholder="Remarks..." />
                 </template>
             </Column>
-            <Column field="no_document" header="Purchase Order" :sortable="true" headerStyle="width:20%; min-width:20rem;">
+            <Column field="no_document" header="PO Number" :sortable="true" headerStyle="width:20%; min-width:20rem;">
                 <template #body="slotProps">
-                    <span class="p-column-title text-xs"><small>Purchase Order</small></span>
+                    <span class="p-column-title text-xs"><small>PO Number</small></span>
                     <span>{{ slotProps.data.no_document }}</span>
+                </template>
+            </Column>
+            <Column field="project" header="Project" :sortable="true" headerStyle="width:20%; min-width:15rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>Project</small></span>
+                    <span>{{ slotProps.data.project }}</span>
                 </template>
             </Column>
             <Column field="po_value" header="Nilai PO" :sortable="true" headerStyle="width:14%; min-width:10rem;">
