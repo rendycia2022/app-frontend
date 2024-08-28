@@ -157,12 +157,10 @@ const updateDataFromStackChartProject = (DateSelected)=>{
 
 // chart stack selected PO
 watch(() => props.selectedChartStackPO, async (newValue, oldValue) => {
-    console.log(newValue)
     updateDataFromStackChartPO(newValue);
 },{ deep: true });
 
 const updateDataFromStackChartPO = (DateSelected)=> {
-    
     var selectedLabel = DateSelected.label;
     var stackIndex = DateSelected.datasetLabel;
     var title = DateSelected.title;
@@ -171,18 +169,18 @@ const updateDataFromStackChartPO = (DateSelected)=> {
     DataDummy.value = [];
 
     for (let i = 0; i < products.value.length; i++) {
-        var productDate = dateFormating(products.value[i].date);
+        var productDate = dateFormatingYear(products.value[i].date);
         if (productDate == selectedLabel) {
             var itemList = products.value[i].item_list;
             if(stackIndex == 'total'){
                 for(let j=0; j < itemList.length; j++){
-                    if(itemList[j].project.name == title){
+                    if(itemList[j].purchase_order == title){
                         DataDummy.value.push(products.value[i]);
                     }
                 }
             }else{
                 for(let j=0; j < itemList.length; j++){
-                    if(itemList[j].project.name == title){
+                    if(itemList[j].purchase_order == title){
                         if(itemList[j].cost_type_label == stackIndex){
                             DataDummy.value.push(products.value[i]);
                         }
@@ -203,6 +201,18 @@ const dateFormating = (date)=>{
     }
     var getYear =  newDate.getFullYear();
     var formatedDate = getYear+'-'+getMonth;
+
+    return formatedDate;
+}
+
+const dateFormatingYear = (date)=>{
+    var newDate = new Date(date);
+    var getMonth = newDate.getMonth()+1;
+    if(getMonth < 10){
+        getMonth = '0'+getMonth;
+    }
+    var getYear =  newDate.getFullYear();
+    var formatedDate = getYear;
 
     return formatedDate;
 }
