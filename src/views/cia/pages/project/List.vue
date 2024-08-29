@@ -14,6 +14,7 @@ const local = ref({
 
 // data
 const products = ref(null);
+const productsOriginal = ref(null);
 const fetching = async () =>{
     const response = await axiosManagement.get('/project/list',{ 
         params:{
@@ -21,8 +22,9 @@ const fetching = async () =>{
             user_id: local.value.user_id,
         }
     });
-    console.log(response.data);
+    // console.log(response.data);
     products.value = response.data.list;
+    productsOriginal.value = response.data.list;
 }
 onMounted( () => {
     fetching();
@@ -38,6 +40,20 @@ const initFilters = () => {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS }
     };
 };
+
+const selectedStatus = ref();
+const status = ref(["Open", "Close"]);
+watch(() => selectedStatus.value, async (newValue, oldValue) => {
+    if(newValue != null){
+        products.value = productsOriginal.value;
+        products.value = products.value.filter((val) => val.status.includes(newValue));
+    }
+});
+
+const clearSelected = () =>{
+    products.value = productsOriginal.value;
+    selectedStatus.value = null;
+}
 
 // grouping
 const expandedRowGroups = ref();
@@ -165,7 +181,13 @@ const indirectDialog = ref(false);
 const openIndirectDialog = (detail) => {
     product.value = detail;
     indirectDialog.value = true;
-    // console.log(product.value)
+    // console.log(product.value) 
+};
+
+// export
+const dt = ref(null);
+const exportCSV = () => {
+    dt.value.exportCSV();
 };
 
 </script>
@@ -186,6 +208,8 @@ const openIndirectDialog = (detail) => {
             @cell-edit-complete="onCellEditComplete" 
             tableClass="editable-cells-table"
             :rowClass="rowClass"
+            ref="dt"
+            csvSeparator=";"
         >
             <template #header>
                 <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
@@ -193,6 +217,11 @@ const openIndirectDialog = (detail) => {
                         <i class="pi pi-search" />
                         <InputText v-model="filters['global'].value" placeholder="Search..." />
                     </span>
+                    <div class="grid">
+                        <Dropdown v-model="selectedStatus" :options="status" placeholder="Select status" class="w-100 mr-1"></Dropdown>
+                        <Button icon="pi pi-times" aria-label="Clear" v-tooltip="'Clear search'" rounded severity="danger"  @click="clearSelected" />
+                    </div>
+                    <Button label="Export CSV" severity="info" icon="pi pi-download" size="small" @click="exportCSV($event)" />
                 </div>
             </template>
             <template #groupheader="slotProps">

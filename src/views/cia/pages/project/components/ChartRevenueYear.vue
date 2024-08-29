@@ -103,6 +103,7 @@ const selectedYear = ref(2024);
 const years = ref([2024,2023,2022]);
 watch(() => selectedYear.value, async (newValue, oldValue) => {
     fetching(newValue)
+    console.log(newValue)
 });
 </script>
 
