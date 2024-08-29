@@ -170,6 +170,7 @@ const updateDataFromStackChartPO = (DateSelected)=> {
 
     for (let i = 0; i < products.value.length; i++) {
         var productDate = dateFormatingYear(products.value[i].date);
+        var document_id = products.value[i].id;
         if (productDate == selectedLabel) {
             var itemList = products.value[i].item_list;
             if(stackIndex == 'total'){
@@ -182,7 +183,11 @@ const updateDataFromStackChartPO = (DateSelected)=> {
                 for(let j=0; j < itemList.length; j++){
                     if(itemList[j].purchase_order == title){
                         if(itemList[j].cost_type_label == stackIndex){
-                            DataDummy.value.push(products.value[i]);
+                            
+                            if (findIndexById(DataDummy.value, document_id) === false) {
+                                DataDummy.value.push(products.value[i]);
+                            }
+                            
                         }
                     }
                 }
@@ -191,6 +196,17 @@ const updateDataFromStackChartPO = (DateSelected)=> {
     }
     products.value = DataDummy.value;
 }
+
+const findIndexById = (data, id) => {
+    let result = false;
+    for (let i = 0; i < data.length; i++) {
+        if (data[i].id === id) {
+            result = true;
+            break;
+        }
+    }
+    return result;
+};
 
 // date builder
 const dateFormating = (date)=>{

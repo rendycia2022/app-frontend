@@ -133,6 +133,7 @@ const search = (event) => {
 
 const handleSelected = (item) => {
     let selected = item.value;
+    chartForProject.value = chartForProjectOriginal.value;
     chartForProject.value = chartForProject.value.filter((val) => val.options.title.text.toLowerCase() === selected.toLowerCase());
 }
 
