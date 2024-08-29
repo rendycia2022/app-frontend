@@ -122,12 +122,6 @@ const formatNumber = (value) => {
     return value?.toLocaleString('en-US');
 };
 
-// link
-const seeMore = (detail) =>{
-    const target = detail.revenue_link;
-    window.open(target, '_blank').focus();
-}
-
 // data formulas
 const margin = (revenue, cost) =>{
     var percent = 0;
@@ -190,6 +184,11 @@ const exportCSV = () => {
     dt.value.exportCSV();
 };
 
+// openExternalLink
+const openLink = (link) =>{
+    window.open(link, '_blank').focus();
+}
+
 </script>
 
 <template>
@@ -219,7 +218,7 @@ const exportCSV = () => {
                     </span>
                     <div class="grid">
                         <Dropdown v-model="selectedStatus" :options="status" placeholder="Select status" class="w-100 mr-1"></Dropdown>
-                        <Button icon="pi pi-times" aria-label="Clear" v-tooltip="'Clear search'" rounded severity="danger"  @click="clearSelected" />
+                        <Button icon="pi pi-times" aria-label="Clear" v-tooltip="'Clear filter'" size="small" rounded severity="danger" @click="clearSelected" />
                     </div>
                     <Button label="Export CSV" severity="info" icon="pi pi-download" size="small" @click="exportCSV($event)" />
                 </div>
@@ -264,6 +263,12 @@ const exportCSV = () => {
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>PO Number</small></span>
                     <span>{{ slotProps.data.no_document }}</span>
+                </template>
+            </Column>
+            <Column field="document_po" header="" class="text-center" :sortable="true" headerStyle="width:10%; min-width:8rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small></small></span>
+                    <Button v-if="slotProps.data.document_po" @click="openLink(slotProps.data.document_po)" severity="info" v-tooltip="'Open file'" icon="pi pi-file" size="small" rounded />
                 </template>
             </Column>
             <Column field="project" header="Project" :sortable="true" headerStyle="width:20%; min-width:15rem;">
@@ -348,6 +353,13 @@ const exportCSV = () => {
     
 </template>
 <style lang="scss" scoped>
+.container {
+    position: relative;
+    overflow: hidden;
+    width: 20px;
+    height: 22px;
+}
+
 .small-padding-button {
     padding: 2px 4px !important; /* Sesuaikan nilai padding sesuai kebutuhan Anda */
 }
