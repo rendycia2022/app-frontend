@@ -117,7 +117,7 @@ const onRowExpand = (event) => {
 const onRowCollapse = (event) => {
 };
 const expandAll = () => {
-    expandedRows.value = products.value.reduce((acc, p) => (acc[p.id] = true) && acc, []);
+    expandedRows.value = products.value.filter((p) => p.id);
 };
 const collapseAll = () => {
     expandedRows.value = null;
@@ -205,7 +205,8 @@ const deleteProduct = async () =>{
                                     :disabled="!products || !products.length"
                                 />
                                 <Button icon="pi pi-file-excel" severity="danger" v-tooltip="'Download Request Template'" outlined rounded aria-label="Download Tempate" @click="downloadTemplateRequest()" :disabled="!products || !products.length" ></Button>
-                                <Button text icon="pi pi-minus" label="Collapse All" @click="collapseAll" />
+                                <Button text icon="pi pi-plus" label="Expand All" @click="expandAll" class="mr-2 mb-2" />
+                                <Button text icon="pi pi-minus" label="Collapse All" @click="collapseAll" class="mb-2" />
                             </div>
                         </div>
                     </template>

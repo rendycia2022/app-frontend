@@ -104,7 +104,7 @@ const formatDate = (date) => {
             
             <div class="grid">
                 <div class="flex justify-content-end col-12" >
-                    <Button label="Success" severity="success" size="small" @click="saveProduct" rounded />
+                    <Button label="Confirm" severity="success" size="small" @click="saveProduct" rounded />
                 </div> 
             </div>
             

@@ -71,16 +71,11 @@ const formatCurrency = (value) => {
 </script>
 
 <template>
-    <div class="card">
+    <div v-if="products?.length > 0" class="card">
         <DataTable
             :value="products"
             dataKey="id"
             removableSort
-            :paginator="true"
-            :rows="25"
-            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-            :rowsPerPageOptions="[25, 50, 100]"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
             responsiveLayout="scroll"
             scrollable scrollHeight="300px"
             resizableColumns 
