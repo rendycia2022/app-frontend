@@ -243,6 +243,19 @@ const router = createRouter({
             name: 'forgotresultProject',
             component: () => import('@/views/project/auth/ForgotResult.vue')
         },
+        // new app
+        {
+            path: '/project/new',
+            component: AppLayoutProject,
+            children: [
+                
+                {
+                    path: '/project/new/dashboard',
+                    name: 'ProjectNewDashboard',
+                    component: () => import('@/views/project/newApp/MainDisplay.vue')
+                },
+            ]
+        },
         // print to pdf
         {
             path: '/project/summary/:projectId/direct/:directId/pdf',
