@@ -16,7 +16,7 @@ const local = ref({
 import { useToast } from 'primevue/usetoast';
 const toast = useToast();
 
-// products
+// data
 const products = ref(null);
 const fetching = async () =>{
     const response = await axiosProject.get('/v2/projects',{ 
@@ -25,6 +25,7 @@ const fetching = async () =>{
             user_id: local.value.user_id,
         }
     });
+    products.value = response.data.list;
     local.value.backend = response.data.backend;
 }
 
@@ -116,8 +117,8 @@ const downloadTemplateProjects = async () => {
     <ScrollPanel :style="{ width: '100%', height: '90%' }" >
         <div class="grid">
             
-            <div class="col-12 md:col-6 lg:col-4 xl:col-3">
-                <ItemDetail />
+            <div v-for="(n, index) in products" class="col-12 md:col-6 lg:col-4 xl:col-3" >
+                <ItemDetail :code="n.code" />
             </div>
 
         </div>

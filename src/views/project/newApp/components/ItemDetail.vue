@@ -15,12 +15,16 @@ const local = ref({
 import { useToast } from 'primevue/usetoast';
 const toast = useToast();
 
+
+// define
+const props = defineProps(['code']);
+
 </script>
 
 <template>
     <div class="card mb-0">
         <div class="flex justify-content-between mb-5">
-            <Header />
+            <Header :code="props.code" />
         </div>
     </div>
 </template>
