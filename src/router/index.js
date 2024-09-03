@@ -254,6 +254,11 @@ const router = createRouter({
                     name: 'ProjectNewDashboard',
                     component: () => import('@/views/project/newApp/MainDisplay.vue')
                 },
+                {
+                    path: '/project/new/dashboard/:code',
+                    name: 'ProjectNewDetail',
+                    component: () => import('@/views/project/newApp/DetailDisplay.vue')
+                },
             ]
         },
         // print to pdf

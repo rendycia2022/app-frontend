@@ -11,27 +11,12 @@ import ItemDetail from './components/ItemDetail.vue';
 const local = ref({
     user_id: localStorage.getItem('id'),
     token: localStorage.getItem('token'),
+    code: (new URL(window.location.href)).pathname.split('/')[4],
 });
 
 // toast 
 import { useToast } from 'primevue/usetoast';
 const toast = useToast();
-
-// data
-const products = ref(null);
-const fetching = async () =>{
-    const response = await axiosProject.get('/v2/projects',{ 
-        params:{
-            token: local.value.token,
-            user_id: local.value.user_id,
-        }
-    });
-    products.value = response.data.list;
-}
-
-onMounted(() => {
-    fetching();
-});
 
 </script>
 
@@ -43,8 +28,8 @@ onMounted(() => {
     <ScrollPanel :style="{ width: '100%', height: '840px' }" >
         <div class="grid">
             
-            <div v-for="(n, index) in products" class="col-12 md:col-6 lg:col-4 xl:col-3" >
-                <ItemDetail :code="n.code" />
+            <div class="col-12 md:col-6 lg:col-4 xl:col-3" >
+                <ItemDetail :code="local.code" />
             </div>
 
         </div>

@@ -17,7 +17,7 @@ const toast = useToast();
 const props = defineProps(['code']);
 
 // data
-const slicingText = ref(25);
+const slicingText = ref(20);
 const products = ref(null);
 const fetching = async () =>{
     const response = await axiosProject.get('/v2/projects/'+props.code,{ 
