@@ -36,7 +36,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <table class="text-left">
+    <table class="text-left mb-3">
         <tr>
             <td><small>PO Number:</small></td>
             <td>

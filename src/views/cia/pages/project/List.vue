@@ -262,16 +262,17 @@ const openLink = (link) =>{
             <Column field="no_document" header="PO Number" :sortable="true" headerStyle="width:20%; min-width:20rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>PO Number</small></span>
-                    <span>{{ slotProps.data.no_document }}</span>
+                    <Button v-if="slotProps.data.project_link" @click="openLink(slotProps.data.project_link)" :label="slotProps.data.no_document" severity="info" v-tooltip="'See more'" size="small" text />
+                    <Button v-else :label="slotProps.data.no_document" severity="secondary" size="small" text />
                 </template>
             </Column>
-            <Column field="document_po" header="" class="text-center" :sortable="true" headerStyle="width:10%; min-width:8rem;">
+            <Column field="document_po" header="File PO" class="text-center" :sortable="true" headerStyle="width:10%; min-width:8rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small></small></span>
                     <Button v-if="slotProps.data.document_po" @click="openLink(slotProps.data.document_po)" severity="info" v-tooltip="'Open file'" icon="pi pi-file" size="small" rounded />
                 </template>
             </Column>
-            <Column field="project" header="Project" :sortable="true" headerStyle="width:20%; min-width:15rem;">
+            <Column field="project" header="Project's Name" :sortable="true" headerStyle="width:20%; min-width:15rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Project</small></span>
                     <span>{{ slotProps.data.project }}</span>

@@ -35,8 +35,11 @@ const toDashboard = () =>{
 }
 
 // store
+const emit = defineEmits(['completeTodo']);
 const onUpload = () => {
-    toast.add({ severity: 'success', summary: 'Success', detail: 'File Uploaded', life: 3000 });
+    toast.add({ severity: 'success', summary: 'Success', detail: 'File Uploaded, please refresh page', life: 3000 });
+    let date = new Date();
+    emit('completeTodo', date);
 };
 
 // selected data

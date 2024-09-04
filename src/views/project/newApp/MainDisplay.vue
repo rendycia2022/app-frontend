@@ -33,12 +33,17 @@ onMounted(() => {
     fetching();
 });
 
+// stored from controller
+const updateTodos = (updatedTodo) => {
+    fetching();
+};
+
 </script>
 
 <template>
     <Toast />
     <div class="mb-2 text-right">
-        <Controller />
+        <Controller @complete-todo="updateTodos" />
     </div>
     <ScrollPanel :style="{ width: '100%', height: '840px' }" >
         <div class="grid">
