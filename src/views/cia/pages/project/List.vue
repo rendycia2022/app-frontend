@@ -189,6 +189,13 @@ const openLink = (link) =>{
     window.open(link, '_blank').focus();
 }
 
+// information
+// menu panel
+const op2 = ref(null);
+const toggleController = (event) => {
+    op2.value.toggle(event);
+};
+
 </script>
 
 <template>
@@ -220,7 +227,18 @@ const openLink = (link) =>{
                         <Dropdown v-model="selectedStatus" :options="status" placeholder="Select status" class="w-100 mr-1"></Dropdown>
                         <Button icon="pi pi-times" aria-label="Clear" v-tooltip="'Clear filter'" size="small" rounded severity="danger" @click="clearSelected" />
                     </div>
-                    <Button label="Export CSV" severity="info" icon="pi pi-download" size="small" @click="exportCSV($event)" />
+                    <div class="grid">
+                        <Button v-tooltip="'Information'" @click="toggleController" class="mr-1" severity="secondary" icon="pi pi-question" size="small" rounded />
+                        <Button @click="exportCSV($event)" label="Export CSV" severity="info" icon="pi pi-download" size="small" />
+                    </div>
+                    <OverlayPanel ref="op2" appendTo="body" id="overlay_panel" >
+                        <div class="flex flex-wrap gap-2 justify-end">
+                            <ul>
+                                <li><b class="text-blue-500">BLUE</b> Color Text is LINK to PPS and AF Web Applications</li>
+                            </ul>
+                        </div>
+                        
+                    </OverlayPanel>
                 </div>
             </template>
             <template #groupheader="slotProps">
@@ -305,7 +323,7 @@ const openLink = (link) =>{
             <Column field="indirect" header="Indirect" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Indirect</small></span>
-                    <Button :label="formatCurrency(slotProps.data.indirect).toString()" class="small-padding-button" @click="openIndirectDialog(slotProps.data)" rounded text size="small"  />
+                    <Button :label="formatCurrency(slotProps.data.indirect).toString()" class="small-padding-button" severity="info" @click="openIndirectDialog(slotProps.data)" rounded text size="small"  />
                 </template>
             </Column>
             <Column field="cogs" header="COGS" :sortable="true" headerStyle="width:14%; min-width:10rem;">

@@ -188,8 +188,8 @@ const deleteProduct = async () =>{
                                     :url="local.backend_target+'/budget/plan/'+local.project_id+'/'+local.project_name+'/'+local.user_id" 
                                     accept=".xlsx,.xls" :maxFileSize="10000000" @upload="onUpload" 
                                     :auto="true"
-                                    v-tooltip="'Import Budget Plan'"
-                                    chooseLabel="Import"
+                                    v-tooltip="'Import Budget Plan File'"
+                                    chooseLabel="Budget"
                                 />
                                 <Button icon="pi pi-file-excel" severity="success" v-tooltip="'Download Budget Plan Template'" outlined rounded aria-label="Download Tempate" @click="downloadTemplateBudgetPlan()" ></Button>
                             </div>
@@ -200,11 +200,11 @@ const deleteProduct = async () =>{
                                     :url="local.backend_target+'/budget/request/'+local.project_id+'/'+local.project_name+'/'+local.user_id" 
                                     accept=".xlsx,.xls" :maxFileSize="10000000" @upload="onUpload" 
                                     :auto="true"
-                                    v-tooltip="'Upload Request'"
-                                    chooseLabel="Request"
+                                    v-tooltip="'Upload Usage File'"
+                                    chooseLabel="Usage"
                                     :disabled="!products || !products.length"
                                 />
-                                <Button icon="pi pi-file-excel" severity="danger" v-tooltip="'Download Request Template'" outlined rounded aria-label="Download Tempate" @click="downloadTemplateRequest()" :disabled="!products || !products.length" ></Button>
+                                <Button icon="pi pi-file-excel" severity="danger" v-tooltip="'Download Usage Template'" outlined rounded aria-label="Download Tempate" @click="downloadTemplateRequest()" :disabled="!products || !products.length" ></Button>
                                 <Button text icon="pi pi-plus" label="Expand All" @click="expandAll" class="mr-2 mb-2" />
                                 <Button text icon="pi pi-minus" label="Collapse All" @click="collapseAll" class="mb-2" />
                             </div>
@@ -222,7 +222,7 @@ const deleteProduct = async () =>{
                             <span><small>{{ slotProps.data.name }}</small></span>
                         </template>
                     </Column>
-                    <Column field="value" header="Value" :sortable="true" headerStyle="width: 10%">
+                    <Column field="value" header="Budget" :sortable="true" headerStyle="width: 10%">
                         <template #body="slotProps">
                             <span><small>{{ formatCurrency(slotProps.data.value) }}</small></span>
                         </template>

@@ -93,8 +93,8 @@ const toggleController = (event) => {
 
 <template>
     <Toast />
-    <Button @click="toggleController" v-tooltip.left="'Controller'" icon="pi pi-th-large" severity="secondary" text rounded aria-label="toggleController" />
-    <OverlayPanel ref="op2" appendTo="body" :showCloseIcon="true" id="overlay_panel" >
+    <Button @click="toggleController" v-tooltip.left="'Controller'" icon="pi pi-th-large" severity="secondary" rounded aria-label="toggleController" />
+    <OverlayPanel ref="op2" appendTo="body" id="overlay_panel" >
         <div class="flex flex-wrap gap-2 justify-end">
             <Button @click="toDashboard" v-tooltip.left="'Dashboard'" class="mr-5" icon="pi pi-desktop" severity="info" size="small" rounded aria-label="Dashboard" />
             <FileUpload 

@@ -6,10 +6,13 @@ import { useRouter } from 'vue-router';
 
 // components
 import Header from './detail/Header.vue';
+import Plan from './detail/Plan.vue';
+import Revenue from './detail/Revenue.vue';
 
 const local = ref({
     user_id: localStorage.getItem('id'),
     token: localStorage.getItem('token'),
+    code: (new URL(window.location.href)).pathname.split('/')[4],
 });
 
 // toast 
@@ -20,7 +23,7 @@ const toast = useToast();
 const router = useRouter();
 
 // define
-const props = defineProps(['code']);
+const props = defineProps(['code', 'completed']);
 
 const selected = () =>{
     router.push({path: '/project/new/dashboard/'+props.code});
@@ -28,13 +31,12 @@ const selected = () =>{
 </script>
 
 <template>
-    <div @click="selected" class="card border-200 cursor-pointer border-2 hover:border-primary transition-duration-300 transition-all" style="border-radius: 10px">
-        <Header :code="props.code" />
-    </div>
-    
-    <!-- <div class="card mb-0">
-        <div class="flex justify-content-between mb-5">
-            
+    <div class="card border-200 border-2 hover:border-primary transition-duration-300 transition-all" style="border-radius: 10px">
+        <Header :code="props.code" :completed="props.completed" />
+        <Plan :code="props.code" :completed="props.completed" />
+        <Revenue :code="props.code" :completed="props.completed" />
+        <div class="text-center" v-if="props.code !== local.code" >
+            <Button @click="selected" label="See more" severity="info" size="small" rounded text aria-label="See more" />
         </div>
-    </div> -->
+    </div>
 </template>

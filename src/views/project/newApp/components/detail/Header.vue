@@ -14,7 +14,13 @@ import { useToast } from 'primevue/usetoast';
 const toast = useToast();
 
 // define
-const props = defineProps(['code']);
+const props = defineProps(['code', 'completed']);
+watch(() => props.completed, async (newValue, oldValue) => {
+    fetching();  
+});
+watch(() => props.code, async (newValue, oldValue) => {
+    fetching();  
+});
 
 // data
 const slicingText = ref(20);
@@ -36,50 +42,50 @@ onMounted(() => {
 </script>
 
 <template>
-    <table class="text-left mb-3">
+    <table class="text-left mb-3" v-for="(n, index) in products" > 
         <tr>
             <td><small>PO Number:</small></td>
             <td>
-                <small v-if="products?.po_number.length > slicingText" v-tooltip="products?.po_number" class="font-bold">{{ products?.po_number.slice(0, slicingText) }}...</small>
-                <small v-else class="font-bold">{{ products?.po_number }}</small>
+                <small v-if="n.po_number.length > slicingText" v-tooltip="n.po_number" class="font-bold">{{ n.po_number.slice(0, slicingText) }}...</small>
+                <small v-else class="font-bold">{{ n.po_number }}</small>
             
             </td>
         </tr>
         <tr>
             <td><small>Project's Name:</small></td>
             <td>
-                <small v-if="products?.name.length > slicingText" v-tooltip="products?.name" class="font-bold">{{ products?.name.slice(0, slicingText) }}...</small>
-                <small v-else class="font-bold">{{ products?.name }}</small>
+                <small v-if="n.name.length > slicingText" v-tooltip="n.name" class="font-bold">{{ n.name.slice(0, slicingText) }}...</small>
+                <small v-else class="font-bold">{{ n.name }}</small>
             </td>
         </tr>
         <tr>
             <td><small>Project's Type:</small></td>
             <td>
-                <small v-if="products?.type.length > slicingText" v-tooltip="products?.type" class="font-bold">{{ products?.type.slice(0, slicingText) }}...</small>
-                <small v-else class="font-bold">{{ products?.type }}</small>
+                <small v-if="n.type.length > slicingText" v-tooltip="n.type" class="font-bold">{{ n.type.slice(0, slicingText) }}...</small>
+                <small v-else class="font-bold">{{ n.type }}</small>
             </td>
         </tr>
         <tr>
             <td><small>Customer:</small></td>
             <td>
-                <small v-if="products?.customer.length > slicingText" v-tooltip="products?.customer" class="font-bold">{{ products?.customer.slice(0, slicingText) }}...</small>
-                <small v-else class="font-bold">{{ products?.customer }}</small>
+                <small v-if="n.customer.length > slicingText" v-tooltip="n.customer" class="font-bold">{{ n.customer.slice(0, slicingText) }}...</small>
+                <small v-else class="font-bold">{{ n.customer }}</small>
             </td>
         </tr>
         <tr>
             <td><small>Assign Ref:</small></td>
             <td>
-                <small v-if="products?.ref.length > slicingText" v-tooltip="products?.ref" class="font-bold">{{ products?.ref.slice(0, slicingText) }}...</small>
-                <small v-else class="font-bold">{{ products?.ref }}</small>
+                <small v-if="n.ref.length > slicingText" v-tooltip="n.ref" class="font-bold">{{ n.ref.slice(0, slicingText) }}...</small>
+                <small v-else class="font-bold">{{ n.ref }}</small>
             </td>
         </tr>
         <tr>
             <td><small>Assign Date:</small></td>
-            <td><small class="font-bold">{{ products?.date }}</small></td>
+            <td><small class="font-bold">{{ n.date }}</small></td>
         </tr>
         <tr>
-            <td><small>Linked Ref:</small></td>
-            <td><small class="font-bold">{{ products?.project }}</small></td>
+            <td><small>Project:</small></td>
+            <td><small class="font-bold">{{ n.project.code }}</small></td>
         </tr>
     </table>
 </template>

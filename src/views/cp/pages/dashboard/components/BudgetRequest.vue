@@ -86,6 +86,7 @@ const formatCurrency = (value) => {
         >
             <template #header>
                 <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                    <h5>{{ props.reference }}</h5>
                     <span class="block mt-2 md:mt-0 p-input-icon-left">
                         <i class="pi pi-search" />
                         <InputText v-model="filters['global'].value" placeholder="Search..." />

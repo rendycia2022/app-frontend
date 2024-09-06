@@ -305,10 +305,16 @@ const openBudget = (detail) =>{
             </Column>
             <Column field="request" header="Request" style="min-width: 200px" sortable >
                 <template #body="slotProps">
-                    <span><small>{{ formatCurrency(slotProps.data.request)}}</small></span>
+                    <span><small>{{ formatCurrency(slotProps.data.request) }}</small></span>
                 </template>
             </Column>
-            <Column field="progress.result" header="Progress" style="min-width: 100px" class="text-center" sortable >
+            <Column field="progress_budget" header="Progress Payment" style="min-width: 100px" sortable >
+                <template #body="slotProps">
+                    <span v-if="slotProps.data.request" class="text-green-500 ml-3 font-medium"><small>{{ Math.round((slotProps.data.request / slotProps.data.budget_plan) * 100) }}%</small></span>
+                    <span v-else ><small>0%</small></span>
+                </template>
+            </Column>
+            <Column field="progress.result" header="Progress Project" style="min-width: 100px" class="text-center" sortable >
                 <template #body="slotProps">
                     <span v-if="slotProps.data.progress.result <= 0" class="text-black-500 ml-3 font-medium"><small>{{ slotProps.data.progress.result }}%</small></span>
                     <span v-else-if="slotProps.data.progress.result < 100" class="text-orange-500 ml-3 font-medium"><small>{{ slotProps.data.progress.result }}%</small></span>
