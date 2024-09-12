@@ -28,13 +28,18 @@ const props = defineProps(['code', 'completed']);
 const selected = () =>{
     router.push({path: '/project/new/dashboard/'+props.code});
 }
+
+const completedBudget= ref({});
+const updateBudget = (updated) => {
+    completedBudget.value = updated;
+};
 </script>
 
 <template>
     <div class="card border-200 border-2 hover:border-primary transition-duration-300 transition-all" style="border-radius: 10px">
         <Header :code="props.code" :completed="props.completed" />
-        <Plan :code="props.code" :completed="props.completed" />
-        <Revenue :code="props.code" :completed="props.completed" />
+        <Plan :code="props.code" :completed="props.completed" @complete-budget="updateBudget"/>
+        <Revenue :code="props.code" :completed="props.completed" :budget="completedBudget" />
         <div class="text-center" v-if="props.code !== local.code" >
             <Button @click="selected" label="See more" severity="info" size="small" rounded text aria-label="See more" />
         </div>

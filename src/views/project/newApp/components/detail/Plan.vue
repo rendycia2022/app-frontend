@@ -14,6 +14,7 @@ import { useToast } from 'primevue/usetoast';
 const toast = useToast();
 
 // define
+const emit = defineEmits(['completeBudget']);
 const props = defineProps(['code', 'completed']);
 watch(() => props.completed, async (newValue, oldValue) => {
     fetching();  
@@ -25,15 +26,17 @@ watch(() => props.code, async (newValue, oldValue) => {
 
 // data
 const slicingText = ref(20);
-const products = ref(null);
+const products = ref({});
 const fetching = async () =>{
-    const response = await axiosProject.get('/v2/projects/'+props.code,{ 
+    const direct = await axiosProject.get('/v2/direct/total/'+props.code,{ 
         params:{
             token: local.value.token,
             user_id: local.value.user_id,
         }
     });
-    products.value = response.data;
+    products.value.direct = direct.data;
+    
+
 }
 
 onMounted(() => {
@@ -45,13 +48,23 @@ const formatCurrency = (value) => {
     return value?.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
 };
 
+// calculate
+const calculateTotal = () =>{
+    let total = 0;
+
+    total = products.value.direct?.total;
+
+    emit('completeBudget', total);
+    return total;
+}
+
 </script>
 
 <template>
     <div class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-5">
         <div>
             <span class="text-900 font-small mr-2 mb-1 md:mb-0"><small><b>Proposed Budget</b></small></span>
-            <div class="mt-1 text-600"><small>{{ formatCurrency(0) }}</small></div>
+            <div class="mt-1 text-600"><small>{{ formatCurrency(calculateTotal()) }}</small></div>
         </div>
     </div>
 
@@ -82,24 +95,24 @@ const formatCurrency = (value) => {
     <!-- direct cost -->
     <div class="grid mb-2">
         <span class="block text-600 font-small mr-2"><small>Direct Cost</small></span>
-        <div class="text-cyan-600"><small><b>{{ formatCurrency(0) }}</b></small></div>
+        <div class="text-cyan-600"><small><b>{{ formatCurrency(products.direct?.['total']) }}</b></small></div>
     </div>
     <ul class="p-0 m-0 list-none mb-5">
         <li class="flex align-items-center py-1 border-bottom-1 surface-border">
             <span class="text-900 line-height-1 mr-2"><small>Consultants</small></span>
-            <span class="text-cyan-500"><small><b>{{ formatCurrency(0) }}</b></small></span>
+            <span class="text-cyan-500"><small><b>{{ formatCurrency(products.direct?.['Consultants']) }}</b></small></span>
         </li>
         <li class="flex align-items-center py-1 border-bottom-1 surface-border">
             <span class="text-900 line-height-1 mr-2"><small>Material Purchasing</small></span>
-            <span class="text-cyan-500"><small><b>{{ formatCurrency(0) }}</b></small></span>
+            <span class="text-cyan-500"><small><b>{{ formatCurrency(products.direct?.['Material Purchasing']) }}</b></small></span>
         </li>
         <li class="flex align-items-center py-1 border-bottom-1 surface-border">
             <span class="text-900 line-height-1 mr-2"><small>Sub-Contracting</small></span>
-            <span class="text-cyan-500"><small><b>{{ formatCurrency(0) }}</b></small></span>
+            <span class="text-cyan-500"><small><b>{{ formatCurrency(products.direct?.['Sub-Contracting']) }}</b></small></span>
         </li>
         <li class="flex align-items-center py-1 border-bottom-1 surface-border">
             <span class="text-900 line-height-1 mr-2"><small>Other</small></span>
-            <span class="text-cyan-500"><small><b>{{ formatCurrency(0) }}</b></small></span>
+            <span class="text-cyan-500"><small><b>{{ formatCurrency(products.direct?.['Other']) }}</b></small></span>
         </li>
     </ul>
 </template>

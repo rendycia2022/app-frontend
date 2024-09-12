@@ -9,12 +9,21 @@ const local = ref({
     token: localStorage.getItem('token'),
 });
 
+// config
+const handleEnterKey = (event) =>{
+    // Prevents Enter key from submitting the form and instead adds a new line
+    event.stopPropagation();
+};
+
 // toast 
 import { useToast } from 'primevue/usetoast';
 const toast = useToast();
 
 // define
-const props = defineProps(['code']);
+const props = defineProps(['code', 'completed']); 
+watch(() => props.completed, async (newValue, oldValue) => {
+    fetching();  
+});
 
 // data
 const products = ref(null);
@@ -108,7 +117,7 @@ const formatCurrency = (value) => {
                 <small>{{ slotProps.data.name }}</small>
             </template>
             <template #editor="{ data, field }">
-                <Textarea v-model="data[field]" rows="5" />
+                <Textarea v-model="data[field]" rows="5" @keydown.enter="handleEnterKey" />
             </template>
         </Column>
         <Column field="type" header="Project's type" headerStyle="width: 10%" >
@@ -117,7 +126,7 @@ const formatCurrency = (value) => {
                 <small>{{ slotProps.data.type }}</small>
             </template>
             <template #editor="{ data, field }">
-                <Textarea v-model="data[field]" rows="5" />
+                <Textarea v-model="data[field]" rows="5" @keydown.enter="handleEnterKey" />
             </template>
         </Column>
         <Column field="customer" header="Customer" headerStyle="width: 15%" >
@@ -141,7 +150,7 @@ const formatCurrency = (value) => {
                 <small>{{ slotProps.data.ref }}</small>
             </template>
             <template #editor="{ data, field }">
-                <Textarea v-model="data[field]" rows="5" />
+                <Textarea v-model="data[field]" rows="5" @keydown.enter="handleEnterKey" />
             </template>
         </Column>
         <Column field="date" header="Assign date" headerStyle="width: 10%" >

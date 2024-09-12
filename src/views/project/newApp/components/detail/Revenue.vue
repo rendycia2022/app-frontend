@@ -14,12 +14,18 @@ import { useToast } from 'primevue/usetoast';
 const toast = useToast();
 
 // define
-const props = defineProps(['code', 'completed']);
+const props = defineProps(['code', 'completed', 'budget']);
 watch(() => props.completed, async (newValue, oldValue) => {
     fetching();  
 });
 watch(() => props.code, async (newValue, oldValue) => {
     fetching();  
+});
+
+// budget
+const budget = ref({});
+watch(() => props.budget, async (newValue, oldValue) => {
+    budget.value = newValue; 
 });
 
 // data
@@ -45,6 +51,10 @@ const formatCurrency = (value) => {
     return value?.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
 };
 
+const formatNumber = (value) => {
+    return value?.toLocaleString('en-US');
+};
+
 // calculation
 const calculateTotal = () => {
     let total = 0;
@@ -68,22 +78,24 @@ const calculateTotalMeta = (meta) => {
 
     return total;
 };
-
 </script>
 
 <template>
     <!-- expected revenue -->
     <div class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-2">
         <div>
-            <span class="text-900 font-small mr-2 mb-1 md:mb-0"><small>Expected Revenue</small></span>
+            <span class="text-900 font-small mr-2 mb-1 md:mb-0">
+                <small><b>Expected Revenue</b></small>
+                <small class="ml-1">in <b class="text-green-600">{{ formatNumber(calculateTotalMeta('qty')) }}</b> Site</small>
+            </span>
             <div class="mt-1 text-green-600"><small><b>{{ formatCurrency(calculateTotal()) }}</b></small></div>
         </div>
     </div>
     <div class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-1">
         <div>
-            <span class="text-900 font-small mr-2 mb-1 md:mb-0"><small>Expected Margin</small></span>
-            <span class="text-green-600"><small><b>0%</b></small></span>
-            <div class="mt-1 text-green-600"><small><b>{{ formatCurrency(0) }}</b></small></div>
+            <span class="text-900 font-small mr-2 mb-1 md:mb-0"><small><b>Expected Margin</b></small></span>
+            <span class="text-green-600"><small><b>{{ Math.round(((calculateTotal()-budget) / calculateTotal())*100) }}%</b></small></span>
+            <div class="mt-1 text-green-600"><small><b>{{ formatCurrency(calculateTotal()-budget) }}</b></small></div>
         </div>
     </div>
 </template>

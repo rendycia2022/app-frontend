@@ -2,7 +2,7 @@
 import { FilterMatchMode } from 'primevue/api';
 import { onMounted, reactive, ref, watch, onBeforeMount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
-import { axiosManagement } from '../../../../service/axios';
+import { axiosManagement, axiosProject } from '../../../../service/axios';
 
 // components
 import IndirectList from './components/IndirectList.vue';
@@ -22,7 +22,6 @@ const fetching = async () =>{
             user_id: local.value.user_id,
         }
     });
-    // console.log(response.data);
     products.value = response.data.list;
     productsOriginal.value = response.data.list;
 }
@@ -105,6 +104,21 @@ const calculateTotal = (name, meta) => {
             if (product.representative.cust_init === name) {
                 
                 total = total + product[meta];
+
+            }
+        }
+    }
+
+    return total;
+};
+
+const calculateTotalCost = (name) => {
+    let total = 0;
+    if (products.value) {
+        for (let product of products.value) {
+            if (product.representative.cust_init === name) {
+                let subtotal = product.direct.total + product.indirect;
+                total = total + subtotal;
 
             }
         }
@@ -205,7 +219,9 @@ const toggleController = (event) => {
             v-model:expandedRowGroups="expandedRowGroups" 
             :value="products" 
             tableStyle="min-width: 50rem"
-            expandableRowGroups rowGroupMode="subheader" groupRowsBy="representative.cust_init"
+            expandableRowGroups 
+            rowGroupMode="subheader" 
+            groupRowsBy="representative.cust_init"
             sortMode="single" sortField="representative.cust_init" :sortOrder="1"
             scrollable scrollHeight="720px"
             :filters="filters"
@@ -245,9 +261,9 @@ const toggleController = (event) => {
                 <span class="align-middle ml-2 font-bold leading-normal">
                     <small>{{ slotProps.data.representative.cust_init }}, 
                         Total Nilai PO: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'po_value')) }}
-                        | Total Revenue: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'revenue')) }}
-                        | Total Cost: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'af_total')) }}
-                        | Margin: {{ margin(calculateTotal(slotProps.data.representative.cust_init, 'po_value'), calculateTotal(slotProps.data.representative.cust_init, 'af_total')) }}%
+                        | Total Invoice: {{ formatCurrency(calculateTotal(slotProps.data.representative.cust_init, 'revenue')) }}
+                        | Total Cost: {{ formatCurrency(calculateTotalCost(slotProps.data.representative.cust_init)) }}
+                        | Margin: {{ margin(calculateTotal(slotProps.data.representative.cust_init, 'po_value'), calculateTotalCost(slotProps.data.representative.cust_init)) }}%
                         | Total PO: {{ calculateTotalQty(slotProps.data.representative.cust_init) }}
                         | Open: {{ calculateTotalQtyStatus(slotProps.data.representative.cust_init, 'Open') }}
                         | Close: {{ calculateTotalQtyStatus(slotProps.data.representative.cust_init, 'Close') }}
@@ -308,52 +324,47 @@ const toggleController = (event) => {
                     <small>{{ formatCurrency(slotProps.data.revenue) }}</small>
                 </template>
             </Column>
-            <Column field="af_total" header="Total Cost" :sortable="true" headerStyle="width:14%; min-width:10rem;">
-                <template #body="slotProps">
-                    <span class="p-column-title text-xs"><small>Total Cost</small></span>
-                    <small>{{ formatCurrency(slotProps.data.af_total) }}</small>
-                </template>
-            </Column>
-            <Column field="direct" header="Direct" :sortable="true" headerStyle="width:14%; min-width:10rem;">
-                <template #body="slotProps">
-                    <span class="p-column-title text-xs"><small>Direct</small></span>
-                    <small></small>
-                </template>
-            </Column>
             <Column field="indirect" header="Indirect" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Indirect</small></span>
                     <Button :label="formatCurrency(slotProps.data.indirect).toString()" class="small-padding-button" severity="info" @click="openIndirectDialog(slotProps.data)" rounded text size="small"  />
                 </template>
             </Column>
-            <Column field="cogs" header="COGS" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+            <Column field="direct.total" header="Direct" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
-                    <span class="p-column-title text-xs" ><small>COGS</small></span>
-                    <small>{{ formatCurrency(slotProps.data.af_total) }}</small>
+                    <span class="p-column-title text-xs"><small>Direct</small></span>
+                    <Button v-if="slotProps.data.project_link" @click="openLink(slotProps.data.project_link)" :label="formatCurrency(slotProps.data.direct.total)" severity="info" v-tooltip="'Direct cost detail'" size="small" text />
+                    <Button v-else :label="formatCurrency(slotProps.data.direct.total)" severity="secondary" size="small" text />
+                </template>
+            </Column>
+            <Column field="cogs" header="Total Cost / COGS" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>Total Cost</small></span>
+                    <small>{{ formatCurrency(slotProps.data.indirect + slotProps.data.direct.total) }}</small>
                 </template>
             </Column>
             <Column field="margin" header="Margin" :sortable="true" headerStyle="width:20%; min-width:15rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Margin</small></span>
-                    <small>{{ formatCurrency(slotProps.data.po_value - slotProps.data.af_total) }}</small>
+                    <small>{{ formatCurrency(slotProps.data.po_value - (slotProps.data.indirect + slotProps.data.direct.total)) }}</small>
                 </template>
             </Column>
             <Column field="margin_percent" header="% Margin" class="text-center" :sortable="true" headerStyle="width:10%; min-width:10rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>% Margin</small></span>
-                    <small>{{ margin(slotProps.data.po_value, slotProps.data.af_total) }}%</small>
+                    <small>{{ margin(slotProps.data.po_value, (slotProps.data.indirect + slotProps.data.direct.total)) }}%</small>
                 </template>
             </Column>
             <Column field="hpp_subcon" header="HPP Subcon (in %)" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>HPP Subcon (in %)</small></span>
-                    <small></small>
+                    <small v-if="slotProps.data.revenue > 0">{{ margin(slotProps.data.po_value, slotProps.data.direct.total) }}%</small>
                 </template>
             </Column>
             <Column field="hpp_nonsubcon" header="HPP Non Subcon (in %)" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>HPP Non Subcon (in %)</small></span>
-                    <small></small>
+                    <small v-if="slotProps.data.revenue > 0">{{ margin(slotProps.data.po_value, slotProps.data.indirect) }}%</small>
                 </template>
             </Column>
             

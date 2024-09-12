@@ -78,9 +78,9 @@ const margin = (revenue, cost) =>{
                     <small>{{ formatCurrency(slotProps.data.dataRaw.po_value) }}</small>
                 </template>
             </Column>
-            <Column field="dataRaw.revenue" header="Revenue" style="min-width: 100px" :sortable="true" >
+            <Column field="dataRaw.revenue" header="Invoice" style="min-width: 100px" :sortable="true" >
                 <template #body="slotProps">
-                    <span class="p-column-title text-xs"><small>Revenue</small></span>
+                    <span class="p-column-title text-xs"><small>Invoice</small></span>
                     <small>{{ formatCurrency(slotProps.data.dataRaw.revenue) }}</small>
                 </template>
             </Column>
@@ -90,30 +90,10 @@ const margin = (revenue, cost) =>{
                     <small>{{ formatCurrency(slotProps.data.dataRaw.af_total) }}</small>
                 </template>
             </Column>
-            <Column field="margin" header="Margin" style="min-width: 10px" :sortable="true" >
+            <Column field="balance" header="Sisa Nilai PO" style="min-width: 100px" :sortable="true" >
                 <template #body="slotProps">
-                    <span class="p-column-title text-xs"><small>Margin</small></span>
-                    <small>{{ margin(slotProps.data.dataRaw.po_value, slotProps.data.dataRaw.af_total) }}%</small>
-                </template>
-            </Column>
-            <Column field="status.total_po" header="Total PO" style="min-width: 10px" :sortable="true" >
-                <template #body="slotProps">
-                    <span class="p-column-title text-xs"><small>Total PO</small></span>
-                    <small>{{ slotProps.data.dataRaw.status.total_po }}</small>
-                </template>
-            </Column>
-            <Column field="status.Open" header="Open PO" style="min-width: 10px" :sortable="true" >
-                <template #body="slotProps">
-                    <span class="p-column-title text-xs"><small>Open PO</small></span>
-                    <small v-if="slotProps.data.dataRaw.status.Open" >{{ slotProps.data.dataRaw.status.Open }}</small>
-                    <small v-else>0</small>
-                </template>
-            </Column>
-            <Column field="status.Close" header="Close PO" style="min-width: 10px" :sortable="true" >
-                <template #body="slotProps">
-                    <span class="p-column-title text-xs"><small>Close PO</small></span>
-                    <small v-if="slotProps.data.dataRaw.status.Close" >{{ slotProps.data.dataRaw.status.Close }}</small>
-                    <small v-else>0</small>
+                    <span class="p-column-title text-xs"><small>Sisa Nilai PO</small></span>
+                    <small>{{ formatCurrency(slotProps.data.dataRaw.po_value - slotProps.data.dataRaw.revenue) }}</small>
                 </template>
             </Column>
         </DataTable>

@@ -116,7 +116,7 @@ const isOutsideClicked = (event) => {
 
 <template>
     <div class="layout-topbar">
-        <router-link to="/project/summary/dashboard" class="layout-topbar-logo">
+        <router-link to="/project/new/dashboard" class="layout-topbar-logo">
             <span>Hello {{ profile.name }}</span>
         </router-link>
 

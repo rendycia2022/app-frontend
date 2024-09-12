@@ -78,7 +78,22 @@ const router = createRouter({
             path: '/cia/pages',
             component: AppLayoutCia,
             children: [
-                
+
+                // new design start
+
+                {
+                    path: '/cia/project/new/list',
+                    name: 'ciaPageProjectListNew',
+                    component: () => import('@/views/cia/pages/project/newList.vue'),
+                },
+                {
+                    path: '/cia/project/new/chart',
+                    name: 'ciaPageProjectChartNew',
+                    component: () => import('@/views/cia/pages/project/components/newChart.vue'),
+                },
+
+                // new design end
+
                 {
                     path: '/cia/dashboard',
                     name: 'ciaDashboard',

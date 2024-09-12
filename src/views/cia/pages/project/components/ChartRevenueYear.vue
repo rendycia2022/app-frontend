@@ -128,7 +128,7 @@ watch(() => selectedYear.value, async (newValue, oldValue) => {
                         <Chart type="doughnut" :data="setChartData(slotProps.data.labels, slotProps.data.dataset, slotProps.data.datasetColor)" :options="setChartOptions()" class="h-10rem mb-2" />
                         <div class="mb-5 text-center">
                             <span class="text-small font-bold mr-2" :style="{ color: slotProps.data.color }">{{ slotProps.data.progress }}%</span>
-                            <span class="text-600 ">In progress </span>
+                            <span class="text-600 ">Remaining</span>
                         </div>
                         <Divider class="w-full bg-surface-200"></Divider>
                         <ul class="mb-5 list-none p-0 flex text-900 flex-column">

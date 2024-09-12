@@ -9,6 +9,9 @@ import Controller from './components/Controller.vue';
 import ItemDetail from './components/ItemDetail.vue';
 import ManageHeader from './components/manages/Header.vue';
 import ManageRevenue from './components/manages/Revenue.vue';
+import ManageSites from './components/manages/Sites.vue';
+import ManageDirect from './components/manages/Direct.vue';
+import ManageIndirect from './components/manages/Indirect.vue';
 
 const local = ref({
     user_id: localStorage.getItem('id'),
@@ -43,10 +46,19 @@ const updateTodos = (updatedTodo) => {
                 <ScrollPanel :style="{ width: '100%', height: '760px' }" >
                     <Accordion>
                         <AccordionTab header="Project's Information">
-                            <ManageHeader :code="local.code" @complete-todo="updateTodos" />
+                            <ManageHeader :code="local.code" @complete-todo="updateTodos" :completed="completedTodo" />
                         </AccordionTab>
                         <AccordionTab header="Expected Revenue">
-                            <ManageRevenue :code="local.code" @complete-todo="updateTodos" />
+                            <ManageRevenue :code="local.code" @complete-todo="updateTodos" :completed="completedTodo" />
+                        </AccordionTab>
+                        <AccordionTab header="Sites">
+                            <ManageSites :code="local.code" @complete-todo="updateTodos" :completed="completedTodo" />
+                        </AccordionTab>
+                        <AccordionTab header="Indirect">
+                            <ManageIndirect :code="local.code" @complete-todo="updateTodos" :completed="completedTodo" />
+                        </AccordionTab>
+                        <AccordionTab header="Direct">
+                            <ManageDirect :code="local.code" @complete-todo="updateTodos" :completed="completedTodo" />
                         </AccordionTab>
                     </Accordion>
                     <ScrollTop target="parent" :threshold="100" icon="pi pi-angle-up" :buttonProps="{ severity: 'secondary', raised: true, rounded: true }" />
