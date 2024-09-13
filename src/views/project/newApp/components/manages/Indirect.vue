@@ -15,6 +15,13 @@ const handleEnterKey = (event) =>{
     event.stopPropagation();
 };
 
+const textAreaNewLineCount = (text) =>{
+    var lines = text.split(/\r|\r\n|\n/);
+    var count = lines.length;
+
+    return count;
+}
+
 // toast 
 import { useToast } from 'primevue/usetoast';
 const toast = useToast();
@@ -28,14 +35,14 @@ watch(() => props.completed, async (newValue, oldValue) => {
 // data
 const products = ref(null);
 const fetching = async () =>{
-    const response = await axiosProject.get('/v2/direct/'+props.code,{ 
+    const response = await axiosProject.get('/v2/indirect/'+props.code,{ 
         params:{
             token: local.value.token,
             user_id: local.value.user_id,
         }
     });
     products.value = response.data
-
+    console.log(products.value)
 }
 
 onMounted(() => {
@@ -47,21 +54,6 @@ const completedTrigger = () =>{
     emit('completeTodo', date);
 }
 
-// grouping
-const expandedRowGroups = ref([]);
-const onRowGroupExpand = (event) => {
-};
-const onRowGroupCollapse = (event) => {
-};
-const expandAll = () => {
-    for (let i = 0; i < products.value.length; i++) {
-        expandedRowGroups.value.push(products.value[i].representative.partner);
-    }
-};
-const collapseAll = () => {
-    expandedRowGroups.value = [];
-};
-
 // edit data
 const emit = defineEmits(['completeTodo']);
 const product = ref({});
@@ -70,7 +62,7 @@ const onCellEditComplete = async (event) => {
     product.value.token = local.value.token;
     product.value.user_id = local.value.user_id;
 
-    const response = await axiosProject.put('/v2/direct/'+product.value.id, product.value);
+    const response = await axiosProject.put('/v2/indirect/'+product.value.id, product.value);
     if(response.data.status == 200){
         fetching();
         product.value = {};
@@ -91,7 +83,7 @@ const confirmDeleteProduct = (detail) => {
 };
 
 const deleteProduct = async () =>{
-    const response = await axiosProject.delete('/v2/direct/'+product.value.id, {data: product.value,
+    const response = await axiosProject.delete('/v2/indirect/'+product.value.id, {data: product.value,
         params: local.value
     });
     if(response.data.status == 200){
@@ -115,13 +107,12 @@ const initFilters = () => {
 };
 
 // calculate
-const calculateTotalPartner = (name) => {
+const calculateTotal = (name) => {
     let total = 0;
     if (products.value) {
         for (let product of products.value) {
-            if (product.representative.partner === name) {
-                let subtotal = product.qty * product.price;
-                total = total + subtotal;
+            if (product.representative.category === name) {
+                total = total + product.subtotal;
             }
         }
     }
@@ -141,8 +132,7 @@ const formatNumber = (value) => {
 
 <template>
     <Toast />
-    <!-- <DataTable
-        v-model:expandedRowGroups="expandedRowGroups"
+    <DataTable
         :value="products"
         dataKey="id"
         editMode="cell" 
@@ -152,14 +142,12 @@ const formatNumber = (value) => {
         size="small"
         scrollable scrollHeight="600px"
         :filters="filters"
-        expandableRowGroups
         rowGroupMode="subheader" 
-        groupRowsBy="representative.partner"
+        groupRowsBy="representative.category"
         sortMode="single"
         :sortOrder="1"
-        sortField="representative.partner" 
+        sortField="item" 
         removableSort
-        @rowgroup-expand="onRowGroupExpand" @rowgroup-collapse="onRowGroupCollapse"
     >
         <template #header>
             <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
@@ -167,49 +155,60 @@ const formatNumber = (value) => {
                     <i class="pi pi-search" />
                     <InputText v-model="filters['global'].value" placeholder="Search..." />
                 </span>
-                <div style="text-align:right">
-                    <Button text icon="pi pi-plus" label="Expand All" @click="expandAll" size="small" class="mr-2 mb-2" />
-                    <Button text icon="pi pi-minus" label="Collapse All" @click="collapseAll" size="small" class="mb-2" />
-                </div>
             </div>
         </template>
 
         <template #groupheader="slotProps">
-            <span class="align-middle ml-2 font-bold leading-normal">{{ slotProps.data.representative.partner }}</span>
+            <span class="align-middle ml-2 font-bold leading-normal">{{ slotProps.data.representative.category }}</span>
         </template>
-        <Column field="representative.partner" header="Representative"></Column>
+        <Column field="representative.category" header="Representative"></Column>
 
-        <Column field="item_title" header="Category" headerStyle="width: 20%" :sortable="true" >
-            <template #body="slotProps">
-                <span class="p-column-title text-xs"><small>Category</small></span>
-                <small>{{ slotProps.data.item_title }}</small>
-            </template>
-        </Column>
         <Column field="item" header="Item" headerStyle="width: 20%" :sortable="true" >
             <template #body="slotProps">
                 <span class="p-column-title text-xs"><small>Item</small></span>
                 <small>{{ slotProps.data.item }}</small>
             </template>
         </Column>
-        <Column field="qty" header="Qty" headerStyle="width: 20%" :sortable="true" >
+        <Column field="remarks" header="Remarks" headerStyle="width: 10%" :sortable="true" >
+            <template #body="slotProps">
+                <span class="p-column-title text-xs"><small>Remarks</small></span>
+                <Textarea v-model="slotProps.data.remarks" :rows="textAreaNewLineCount(slotProps.data.remarks)" cols="20" readonly />
+            </template>
+            <template #editor="{ data, field }">
+                <Textarea v-model="data[field]" @keydown.enter="handleEnterKey" rows="5" cols="30" placeholder="Remarks..." />
+            </template>
+        </Column>
+        <Column field="qty" header="Qty" headerStyle="width: 5%" :sortable="true" >
             <template #body="slotProps">
                 <span class="p-column-title text-xs"><small>Qty</small></span>
                 <small>{{ formatNumber(slotProps.data.qty) }}</small>
             </template>
+            <template #editor="{ data, field }">
+                <InputNumber v-model="data[field]" integeronly />
+            </template>
         </Column>
-        <Column field="price" header="Price" headerStyle="width: 20%" :sortable="true" >
+        <Column field="duration" header="Duration" headerStyle="width: 5%" :sortable="true" >
             <template #body="slotProps">
-                <span class="p-column-title text-xs"><small>Price</small></span>
-                <small>{{ formatCurrency(slotProps.data.price) }}</small>
+                <span class="p-column-title text-xs"><small>Duration</small></span>
+                <small>{{ formatNumber(slotProps.data.duration) }}</small>
+            </template>
+            <template #editor="{ data, field }">
+                <InputNumber v-model="data[field]" integeronly />
+            </template>
+        </Column>
+        <Column field="cost" header="Cost" headerStyle="width: 25%" :sortable="true" >
+            <template #body="slotProps">
+                <span class="p-column-title text-xs"><small>Cost</small></span>
+                <small>{{ formatCurrency(slotProps.data.cost) }}</small>
             </template>
             <template #editor="{ data, field }">
                 <InputNumber v-model="data[field]" mode="currency" currency="IDR" locale="id-ID" />
             </template>
         </Column>
-        <Column field="subtotal" header="Subtotal" headerStyle="width: 20%" :sortable="true" >
+        <Column field="subtotal" header="Subtotal" headerStyle="width: 25%" :sortable="true" >
             <template #body="slotProps">
                 <span class="p-column-title text-xs"><small>Subtotal</small></span>
-                <small>{{ formatCurrency(slotProps.data.price * slotProps.data.qty) }}</small>
+                <small>{{ formatCurrency(slotProps.data.subtotal) }}</small>
             </template>
         </Column>
         <Column headerStyle="width: 2%">
@@ -222,20 +221,20 @@ const formatNumber = (value) => {
             </template>
         </Column>
         <template #groupfooter="slotProps">
-            <div class="text-right font-bold w-full">
+            <div class="text-right font-bold w-full mb-2">
                 <small>
-                    Total: {{ formatCurrency(calculateTotalPartner(slotProps.data.representative.partner)) }}
+                    Total: {{ formatCurrency(calculateTotal(slotProps.data.representative.category)) }}
                 </small>
             </div>
         </template>
-    </DataTable> -->
+    </DataTable>
 
     <Dialog v-model:visible="deleteProductDialog" :style="{ width: '550px' }" header="Confirm" :modal="true">
         <div class="flex align-items-center justify-content-center">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
             <span v-if="product"
-                >Are you sure you want to delete <b>{{ product.representative.partner }} - {{ product.item }}</b
-                >?</span
+                >Are you sure you want to delete <b>{{ product.item }}</b
+                > {{ formatCurrency(product.subtotal) }} ?</span
             >
         </div>
         <template #footer>
