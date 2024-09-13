@@ -213,7 +213,6 @@ const toggleController = (event) => {
 </script>
 
 <template>
-    
     <div class="card">
         <DataTable
             v-model:expandedRowGroups="expandedRowGroups" 

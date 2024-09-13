@@ -19,7 +19,7 @@ const fetching = async () =>{
             year: false,
         }
     });
-    originalProducts.value = response.data;
+    originalProducts.value = response.data.charts;
     products.value = originalProducts.value;
 
     years.value = response.data.optionYears;
@@ -53,7 +53,7 @@ const setChartOptions = () => {
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                display: false // Menonaktifkan tampilan legenda
+                display: false, // Menonaktifkan tampilan legenda
             },
             tooltip: {
                 enabled: true // Tooltip tetap aktif jika diperlukan
@@ -104,7 +104,7 @@ const responsiveOptions = ref([
 ]);
 
 // selected year
-const selectedYear = ref(2024);
+const selectedYear = ref("ALL");
 const years = ref([]);
 watch(() => selectedYear.value, async (newValue, oldValue) => {
     if(newValue == "ALL"){
@@ -117,7 +117,7 @@ watch(() => selectedYear.value, async (newValue, oldValue) => {
                 year: newValue,
             }
         });
-        products.value = response.data;
+        products.value = response.data.charts;
     }
     
 });
@@ -125,15 +125,40 @@ watch(() => selectedYear.value, async (newValue, oldValue) => {
 </script>
 
 <template>
-    {{ products?.filtered_data.length }}
-    {{ products?.year }}
-    {{ products?.optionYears }}
     <div class="card p-fluid">
         <div class="field grid">
             <label for="name3" class="ml-5 mr-2"><b>Data periode:</b></label>
             <div class="">
-                <Dropdown v-model="selectedYear" :options="years" placeholder="Select a year" class="w-100"></Dropdown>
+                <Dropdown v-model="selectedYear" :options="years" class="w-100"></Dropdown>
             </div>
         </div>
+        <Carousel :value="products" :numVisible="3" :numScroll="1" :responsiveOptions="responsiveOptions">
+            <template #item="slotProps">
+                <div class="mr-2">
+                    <div class="p-3 flex flex-column border-200 pricing-card cursor-pointer border-2 hover:border-green-500 transition-duration-300 transition-all" style="border-radius: 10px">
+                        <h5 class="text-center" :style="{ color: slotProps.data.color }">{{ slotProps.data.title }}</h5>
+                        <div class="mb-5 text-center">
+                            <span class="text-600 mr-2 mb-1 md:mb-0"><b>Expected Revenue</b></span>
+                            <div class="mt-1 text-small font-bold"><small>{{ formatCurrency(slotProps.data.raw.revenue) }}</small></div>
+                        </div>
+                        <Chart type="doughnut" :data="setChartData(slotProps.data.labels, slotProps.data.dataset, slotProps.data.datasetColor)" :options="setChartOptions()" class="h-10rem mb-2" />
+                        <div class="mb-5 text-center">
+                            <span class="text-small font-bold mr-2" :style="{ color: slotProps.data.color }">{{ slotProps.data.progress }}%</span>
+                            <span class="text-600 ">Remaining</span>
+                        </div>
+                        <table class="text-left mb-3 " style="width:60%;"> 
+                            <tr>
+                                <td><small>Expected Revenue's left:</small></td>
+                                <td><small class="font-bold" :style="{ color: slotProps.data.color }">{{ formatCurrency(slotProps.data.raw.revenue - slotProps.data.raw.invoice) }}</small></td>
+                            </tr>
+                            <tr>
+                                <td><small>Invoice:</small></td>
+                                <td><small class="font-bold">{{ formatCurrency(slotProps.data.raw.invoice) }}</small></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </template>
+        </Carousel>
     </div>
 </template>

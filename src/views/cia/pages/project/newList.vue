@@ -203,7 +203,7 @@ const calculateTotalCost = (name) => {
             expandableRowGroups 
             rowGroupMode="subheader" 
             groupRowsBy="project.code"
-            sortMode="single" sortField="project.code" :sortOrder="1"
+            sortMode="single" sortField="project.code" :sortOrder="-1"
             removableSort
             editMode="cell" 
             @cell-edit-complete="onCellEditComplete" 
