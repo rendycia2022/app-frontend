@@ -19,17 +19,17 @@ const handleEnterKey = (event) =>{
 
 // data
 const products = ref(null);
-const productsOriginal = ref(null);
 const product = ref({});
 const fetching = async () =>{
     const response = await axiosManagement.get('/project/new/list',{ 
         params:{
             token: local.value.token,
             user_id: local.value.user_id,
+            year: "All",
+            status: "All",
         }
     });
     products.value = response.data.list;
-    productsOriginal.value = response.data.list;
 }
 onMounted( () => {
     fetching();
@@ -187,6 +187,62 @@ const calculateTotalCost = (name) => {
     return total;
 };
 
+// status
+const getStatus = (status) => {
+    switch (status) {
+         case 'Close':
+            return 'success';
+        case 'Open':
+            return 'warning';
+
+    }
+};
+
+const calculateTotalQtyStatus = (name, meta) => {
+    let total = 0;
+    if (products.value) {
+        for (let product of products.value) {
+            if (product.project.code === name) {
+                
+                if(product.status == meta){
+                    total++;
+                }
+            }
+        }
+    }
+
+    return total;
+};
+
+// filter
+const props = defineProps(['status', 'year']);
+const parameters = ref({
+    year: "All",
+    status: "All",
+});
+
+watch(() => props.year, (newValue, oldValue) => {
+    parameters.value.year = newValue;
+    filterData(parameters.value);
+});
+
+watch(() => props.status, (newValue, oldValue) => {
+    parameters.value.status = newValue;
+    filterData(parameters.value);
+});
+
+const filterData = async (params) =>{
+    const response = await axiosManagement.get('/project/new/list',{ 
+        params:{
+            token: local.value.token,
+            user_id: local.value.user_id,
+            year: params.year,
+            status: params.status,
+        }
+    });
+    products.value = response.data.list;
+}
+
 </script>
 
 <template>
@@ -245,6 +301,8 @@ const calculateTotalCost = (name) => {
                         | Total Cost: {{ formatCurrency(calculateTotalCost(slotProps.data.project.code)) }}
                         | Total Margin: {{ margin(calculateTotal(slotProps.data.project.code, 'revenue'), calculateTotalCost(slotProps.data.project.code)) }}%
                         | Total PO: {{ formatNumber(calculateTotalQty(slotProps.data.project.code)) }}
+                        | Open: {{ calculateTotalQtyStatus(slotProps.data.project.code, 'Open') }}
+                        | Close: {{ calculateTotalQtyStatus(slotProps.data.project.code, 'Close') }}
                     </small>
                 </span>
             </template>
@@ -254,6 +312,12 @@ const calculateTotalCost = (name) => {
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Date</small></span>
                     <span>{{ slotProps.data.date }}</span>
+                </template>
+            </Column>
+            <Column field="status" header="Status" :sortable="true" headerStyle="width:10%; min-width:8rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>Status</small></span>
+                    <Tag :value="slotProps.data.status" :severity="getStatus(slotProps.data.status)" />
                 </template>
             </Column>
             <Column field="remarks" header="Remarks" style="min-width: 200px" :sortable="true" >

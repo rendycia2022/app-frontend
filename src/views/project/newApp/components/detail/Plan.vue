@@ -36,6 +36,13 @@ const fetching = async () =>{
     });
     products.value.direct = direct.data;
     
+    const indirect = await axiosProject.get('/v2/indirect/total/'+props.code,{ 
+        params:{
+            token: local.value.token,
+            user_id: local.value.user_id,
+        }
+    });
+    products.value.indirect = indirect.data;
 
 }
 
@@ -52,7 +59,7 @@ const formatCurrency = (value) => {
 const calculateTotal = () =>{
     let total = 0;
 
-    total = products.value.direct?.total;
+    total = products.value.direct?.total + products.value.indirect?.total;
 
     emit('completeBudget', total);
     return total;
@@ -71,16 +78,16 @@ const calculateTotal = () =>{
     <!-- indirect cost -->
     <div class="grid mb-2">
         <span class="block text-600 font-small mr-2"><small>Indirect Cost</small></span>
-        <div class="text-blue-600"><small><b>{{ formatCurrency(0) }}</b></small></div>
+        <div class="text-blue-600"><small><b>{{ formatCurrency(products.indirect?.['total']) }}</b></small></div>
     </div>
     <ul class="p-0 m-0 list-none mb-5">
         <li class="flex align-items-center py-1 border-bottom-1 surface-border">
             <span class="text-900 line-height-1 mr-2"><small>Resources</small></span>
-            <span class="text-blue-500"><small><b>{{ formatCurrency(0) }}</b></small></span>
+            <span class="text-blue-500"><small><b>{{ formatCurrency(products.indirect?.['Resources']) }}</b></small></span>
         </li>
         <li class="flex align-items-center py-1 border-bottom-1 surface-border">
             <span class="text-900 line-height-1 mr-2"><small>Overhead</small></span>
-            <span class="text-blue-500"><small><b>{{ formatCurrency(0) }}</b></small></span>
+            <span class="text-blue-500"><small><b>{{ formatCurrency(products.indirect?.['Overhead']) }}</b></small></span>
         </li>
         <li class="flex align-items-center py-1 border-bottom-1 surface-border">
             <span class="text-900 line-height-1 mr-2"><small>Tax 3%</small></span>

@@ -320,7 +320,6 @@ const downloadToExcel = async(chartTitle) => {
             :rows="25"
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[25, 50, 100]"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
             class="mt-5"
             :filters="filters"
             removableSort

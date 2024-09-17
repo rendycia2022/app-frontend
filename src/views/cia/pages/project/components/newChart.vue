@@ -11,19 +11,20 @@ const local = ref({
 
 const products = ref(null);
 const originalProducts = ref(null);
+const productsRaw = ref(null);
 const fetching = async () =>{
     const response = await axiosManagement.get('/project/new/chart',{ 
         params:{
             token: local.value.token,
             user_id: local.value.user_id,
-            year: false,
+            year: "All",
+            status: "All",
         }
     });
     originalProducts.value = response.data.charts;
     products.value = originalProducts.value;
 
-    years.value = response.data.optionYears;
-    years.value.unshift("ALL")
+    productsRaw.value = response.data;
 }
 
 onMounted( () => {
@@ -103,35 +104,54 @@ const responsiveOptions = ref([
     }
 ]);
 
-// selected year
-const selectedYear = ref("ALL");
-const years = ref([]);
-watch(() => selectedYear.value, async (newValue, oldValue) => {
-    if(newValue == "ALL"){
-        products.value = originalProducts.value;
-    }else{
-        const response = await axiosManagement.get('/project/new/chart',{ 
-            params:{
-                token: local.value.token,
-                user_id: local.value.user_id,
-                year: newValue,
-            }
-        });
-        products.value = response.data.charts;
-    }
-    
+// filter
+const props = defineProps(['status', 'year']);
+const parameters = ref({
+    year: "All",
+    status: "All",
 });
+
+watch(() => props.year, (newValue, oldValue) => {
+    parameters.value.year = newValue;
+    filterData(parameters.value);
+});
+
+watch(() => props.status, (newValue, oldValue) => {
+    parameters.value.status = newValue;
+    filterData(parameters.value);
+});
+
+const filterData = async (params) =>{
+    const response = await axiosManagement.get('/project/new/chart',{ 
+        params:{
+            token: local.value.token,
+            user_id: local.value.user_id,
+            year: params.year,
+            status: params.status,
+        }
+    });
+    products.value = response.data.charts;
+
+    productsRaw.value = response.data;
+}
+
+// calculation
+const calculateQtyStatus = (projectCode, status) => {
+    let total = 0;
+    if (productsRaw.value.raw.length > 0) {
+        for(let raw in productsRaw.value.raw){
+            total++;
+        }
+    }
+    console.log(projectCode+': '+total)
+
+    return total;
+};
     
 </script>
 
 <template>
     <div class="card p-fluid">
-        <div class="field grid">
-            <label for="name3" class="ml-5 mr-2"><b>Data periode:</b></label>
-            <div class="">
-                <Dropdown v-model="selectedYear" :options="years" class="w-100"></Dropdown>
-            </div>
-        </div>
         <Carousel :value="products" :numVisible="3" :numScroll="1" :responsiveOptions="responsiveOptions">
             <template #item="slotProps">
                 <div class="mr-2">
@@ -156,6 +176,12 @@ watch(() => selectedYear.value, async (newValue, oldValue) => {
                                 <td><small class="font-bold">{{ formatCurrency(slotProps.data.raw.invoice) }}</small></td>
                             </tr>
                         </table>
+                        <!-- <ul class="mb-5 list-none p-0 flex text-900 flex-column">
+                            <li class="py-2">
+                                <Chip class="mr-2 text-900 bg-orange-100" :label="calculateQtyStatus(slotProps.data.title, 'Open')+' PO Open'" />
+                                <Chip class="mr-2 text-900 bg-green-100" :label="calculateQtyStatus(slotProps.data.title, 'Close')+' PO Close'" />
+                            </li>
+                        </ul> -->
                     </div>
                 </div>
             </template>

@@ -23,7 +23,7 @@ onBeforeMount( async() => {
                 }
             })
         if(auth.data.status == 200){
-            router.push({ path: '/project/summary/dashboard' })
+            router.push({ path: '/project/new/dashboard' })
         }
     }  
 });

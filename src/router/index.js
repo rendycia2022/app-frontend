@@ -99,6 +99,11 @@ const router = createRouter({
                     name: 'ciaDashboard',
                     component: () => import('@/views/cia/pages/MainDisplay.vue'),
                 },
+                {
+                    path: '/cia/dashboard/finance',
+                    name: 'ciaDashboardFinance',
+                    component: () => import('@/views/cia/pages/DataFinance.vue'),
+                },
 
                 // project
                 {

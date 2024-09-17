@@ -42,7 +42,6 @@ const fetching = async () =>{
         }
     });
     products.value = response.data
-    console.log(products.value)
 }
 
 onMounted(() => {
