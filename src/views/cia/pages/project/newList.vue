@@ -3,14 +3,18 @@ import { FilterMatchMode } from 'primevue/api';
 import { onMounted, reactive, ref, watch, onBeforeMount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { axiosManagement, axiosProject } from '../../../../service/axios';
+import { useToast } from 'primevue/usetoast';
 
 // components
 import AFList from './components/AFList.vue';
+import BASTDetail from './components/BASTDetail.vue';
 
 const local = ref({
-    user_id: localStorage.getItem('userId'),
+    user_id: localStorage.getItem('id'),
     token: localStorage.getItem('token'),
 });
+
+const toast = useToast();
 
 const handleEnterKey = (event) =>{
     // Prevents Enter key from submitting the form and instead adds a new line
@@ -30,6 +34,15 @@ const fetching = async () =>{
         }
     });
     products.value = response.data.list;
+
+    const backendResponse = await axiosManagement.get('/project/new/bast/backend/target',{ 
+        params:{
+            token: local.value.token,
+            user_id: local.value.user_id,
+        }
+    });
+
+    local.value.backend = backendResponse.data;
 }
 onMounted( () => {
     fetching();
@@ -132,6 +145,13 @@ const indirectDialog = ref(false);
 const openIndirectDialog = (detail) => {
     product.value = detail;
     indirectDialog.value = true;
+    // console.log(product.value) 
+};
+
+const bastDialog = ref(false);
+const openBastDialog = (detail) => {
+    product.value = detail;
+    bastDialog.value = true;
     // console.log(product.value) 
 };
 
@@ -243,10 +263,41 @@ const filterData = async (params) =>{
     products.value = response.data.list;
 }
 
+// upload bast
+const downloadTemplateBAST = async () => {
+    await axiosManagement.get('/project/new/bast/download/template', {
+        params:{
+            token: local.value.token,
+        },
+        responseType: 'blob', // Menentukan tipe respons sebagai blob (binary large object)
+        
+    })
+    .then(response => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'Template_BAST.xlsx'); // Atur nama file sesuai kebutuhan Anda
+      document.body.appendChild(link);
+      link.click();
+    })
+    .catch(error => {
+      console.error(error);
+    });
+};
+
+const onUpload = () => {
+    toast.add({ severity: 'success', summary: 'Success', detail: 'File Uploaded, please refresh page', life: 3000 });
+    fetching();
+};
+
+const op_bast = ref(null);
+const toggleControllerBAST = (event) => {
+    op_bast.value.toggle(event);
+};
+
 </script>
 
 <template>
-    
     <div class="card">
         <DataTable
             :value="products" 
@@ -278,6 +329,7 @@ const filterData = async (params) =>{
                         <Button text icon="pi pi-minus" label="Collapse All" @click="collapseAll" size="small" class="mb-2" />
                     </div>
                     <div class="grid">
+                        <Button v-tooltip="'Import BAST'" @click="toggleControllerBAST" class="mr-5" label="BAST" size="small" rounded />
                         <Button v-tooltip="'Information'" @click="toggleController" class="mr-1" severity="secondary" icon="pi pi-question" size="small" rounded />
                         <Button @click="exportCSV($event)" label="Export CSV" severity="info" icon="pi pi-download" size="small" />
                     </div>
@@ -286,6 +338,30 @@ const filterData = async (params) =>{
                             <ul>
                                 <li><b class="text-blue-500">BLUE</b> Color Text is LINK to PPS and AF Web Applications</li>
                             </ul>
+                        </div>
+                        
+                    </OverlayPanel>
+                    <OverlayPanel ref="op_bast" appendTo="body" id="overlay_panel_bast" >
+                        <div class="flex flex-wrap gap-2 justify-end">
+                            <FileUpload 
+                                mode="basic" name="file"
+                                :url="local.backend+'/project/new/bast/'+local.user_id+'?token='+local.token" 
+                                accept=".xlsx,.xls" :maxFileSize="10000000" @upload="onUpload" 
+                                :auto="true"
+                                v-tooltip.left="'Store'"
+                                chooseLabel="Import"
+                                :class="'p-button-success'"
+                            />
+
+                            <Button 
+                                @click="downloadTemplateBAST()" 
+                                v-tooltip.left="'Download template'" 
+                                icon="pi pi-file" 
+                                severity="secondary" 
+                                size="small" 
+                                rounded aria-label="Download"
+                                class="mr-2"
+                            />
                         </div>
                         
                     </OverlayPanel>
@@ -353,6 +429,12 @@ const filterData = async (params) =>{
                     <small>{{ formatCurrency(slotProps.data.revenue.total) }}</small>
                 </template>
             </Column>
+            <Column field="bast.total" header="BAST" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>BAST</small></span>
+                    <Button @click="openBastDialog(slotProps.data)" :label="formatCurrency(slotProps.data.bast.total)" severity="info" v-tooltip="'More BAST detail'" size="small" text />
+                </template>
+            </Column>
             <Column field="invoice.total" header="Invoice" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Invoice</small></span>
@@ -412,6 +494,16 @@ const filterData = async (params) =>{
         @after-hide="closeDialog(indirectDialog)"
     >
         <AFList :params="product" />
+    </Dialog>
+
+    <Dialog 
+        v-model:visible="bastDialog" 
+        maximizable modal 
+        :header="'BAST Detail for '+product.po_number" 
+        :style="{ width: '150rem' }"
+        @after-hide="closeDialog(bastDialog)"
+    >
+        <BASTDetail :params="product" />
     </Dialog>
 
 </template>

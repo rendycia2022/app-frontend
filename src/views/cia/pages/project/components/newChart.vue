@@ -12,6 +12,7 @@ const local = ref({
 const products = ref(null);
 const originalProducts = ref(null);
 const productsRaw = ref(null);
+const years = ref(null);
 const fetching = async () =>{
     const response = await axiosManagement.get('/project/new/chart',{ 
         params:{
@@ -25,6 +26,7 @@ const fetching = async () =>{
     products.value = originalProducts.value;
 
     productsRaw.value = response.data;
+    years.value = productsRaw.value.optionYears;
 }
 
 onMounted( () => {
@@ -136,14 +138,33 @@ const filterData = async (params) =>{
 }
 
 // calculation
-const calculateQtyStatus = (projectCode, status) => {
+const calculateExpectedRemaining = (year, title) => {
     let total = 0;
-    if (productsRaw.value.raw.length > 0) {
-        for(let raw in productsRaw.value.raw){
-            total++;
+
+    let datas = productsRaw.value.raw;
+
+    var getYear = new Date(year),
+        yearParams = getYear.getFullYear();
+
+    for(let item in datas){
+
+        var projectCode = datas[item].project.code;
+        if(projectCode == title){
+
+            var date = new Date(datas[item].date),
+            yearRaw = date.getFullYear();
+
+            if(yearRaw == yearParams){
+                let revenue = datas[item].revenue.total;
+                let invoice = datas[item].invoice.total;
+
+                let subtotal = revenue - invoice;
+
+                total = total + subtotal;
+            }
         }
+        
     }
-    console.log(projectCode+': '+total)
 
     return total;
 };
@@ -166,7 +187,7 @@ const calculateQtyStatus = (projectCode, status) => {
                             <span class="text-small font-bold mr-2" :style="{ color: slotProps.data.color }">{{ slotProps.data.progress }}%</span>
                             <span class="text-600 ">Remaining</span>
                         </div>
-                        <table class="text-left mb-3 " style="width:60%;"> 
+                        <table class="text-left mb-3" style="width:60%;"> 
                             <tr>
                                 <td><small>Expected Revenue's left:</small></td>
                                 <td><small class="font-bold" :style="{ color: slotProps.data.color }">{{ formatCurrency(slotProps.data.raw.revenue - slotProps.data.raw.invoice) }}</small></td>
@@ -176,12 +197,19 @@ const calculateQtyStatus = (projectCode, status) => {
                                 <td><small class="font-bold">{{ formatCurrency(slotProps.data.raw.invoice) }}</small></td>
                             </tr>
                         </table>
-                        <!-- <ul class="mb-5 list-none p-0 flex text-900 flex-column">
-                            <li class="py-2">
-                                <Chip class="mr-2 text-900 bg-orange-100" :label="calculateQtyStatus(slotProps.data.title, 'Open')+' PO Open'" />
-                                <Chip class="mr-2 text-900 bg-green-100" :label="calculateQtyStatus(slotProps.data.title, 'Close')+' PO Close'" />
-                            </li>
-                        </ul> -->
+                        <small>Expected Revenue's left in each year:</small>
+                        <div class="mb-3">
+                            <table v-for="year in years" class="" style="width:55%;"> 
+                                <tr>
+                                    <td>
+                                        <small>
+                                            <b :style="{ color: slotProps.data.color }">{{ year }}</b>: {{ formatCurrency(calculateExpectedRemaining(year, slotProps.data.title)) }}
+                                        </small>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        
                     </div>
                 </div>
             </template>

@@ -161,6 +161,8 @@ watch(() => item.value.cost_type, async (newValue, oldValue) => {
     
 })
 
+
+
 const projects = ref(null);
 const getProjects = async() =>{
     const response = await axiosAf.get('/af/project/division/'+local.value.division_code,{ 
@@ -626,7 +628,7 @@ const formatNumber = (value) => {
 
     <Dialog v-model:visible="itemDialog" :style="{ width: '720px' }" header="New Item" :modal="true" class="p-fluid">
         <div class="field">
-            <label for="po_number">Purchase Order Number:</label>
+            <label for="po_number">*Purchase Order Number:</label>
             <InputText id="po_number" v-model.trim="item.purchase_order" required="true" autofocus :class="{ 'p-invalid': submittedItem && !item.purchase_order }" />
             <small class="p-invalid" v-if="submittedItem && !item.purchase_order">Purchase Order Number is required.</small>
         </div>
