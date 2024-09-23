@@ -21,6 +21,7 @@ onMounted(() => {
 });
 
 const events = ref(null);
+const product = ref(null);
 const fetching = async () =>{
     const response = await axiosManagement.get('/project/new/bast/bypo',{ 
         params:{
@@ -31,6 +32,16 @@ const fetching = async () =>{
     });
     events.value = response.data.events;
     // console.log(events.value)
+
+    const responsePODetail = await axiosManagement.get('/project/new/list/bypo',{ 
+        params:{
+            token: local.value.token,
+            user_id: local.value.user_id,
+            code: props.params.po_number,
+        }
+    });
+    product.value = responsePODetail.data.list;
+    // console.log(product.value)
 }
 
 // formating
@@ -82,70 +93,76 @@ const calculateQty = (label) =>{
 </script>
 
 <template>
-    
-    <Timeline :value="events" align="alternate" class="customized-timeline">
-        <template #content="slotProps">
-            <Card class="mt-4">
-                <template #title>
-                    {{ slotProps.item.label }}
-                </template>
-                <template #subtitle>
-                    
-                </template>
-                <template #content>
-                    <DataTable 
-                        :value="slotProps.item.raw" 
-                        tableStyle="min-width: 20rem" 
-                        size="small"
-                        sortField="date" :sortOrder="1"
-                        removableSort 
-                    >
-                        <Column header="#">
-                            <template #body="slotProps">
-                                <small>{{ slotProps.index + 1 }}</small>
+    <span v-if="product" class="text-xl line-height-3 mb-2">
+        Total Qty in Expected Revenue: <b>{{ product.revenue.totalQty }}</b>
+    </span>
+    <ScrollPanel :style="{ width: '100%', height: '770px' }" >
+        <Timeline :value="events" align="alternate" class="customized-timeline">
+            <template #content="slotProps">
+                <Card class="mt-4">
+                    <template #title>
+                        {{ slotProps.item.label }}
+                    </template>
+                    <template #subtitle>
+                        
+                    </template>
+                    <template #content>
+                        <DataTable 
+                            :value="slotProps.item.raw" 
+                            tableStyle="min-width: 20rem" 
+                            size="small"
+                            sortField="date" :sortOrder="1"
+                            removableSort 
+                        >
+                            <Column header="#">
+                                <template #body="slotProps">
+                                    <small>{{ slotProps.index + 1 }}</small>
+                                </template>
+                            </Column>
+                            <Column field="invoice_number" header="Invoice" sortable>
+                                <template #body="slotTableProps">
+                                    <small>{{ slotTableProps.data.invoice_number }}</small>
+                                </template>
+                            </Column>
+                            <Column field="date" header="Date" sortable>
+                                <template #body="slotTableProps">
+                                    <small>{{ slotTableProps.data.date }}</small>
+                                </template>
+                            </Column>
+                            <Column field="price" header="Unit Price">
+                                <template #body="slotTableProps">
+                                    <small>{{ formatCurrency(slotTableProps.data.price) }}</small>
+                                </template>
+                            </Column>
+                            <Column field="qty" header="Qty">
+                                <template #body="slotTableProps">
+                                    <small>{{ slotTableProps.data.qty }}</small>
+                                </template>
+                            </Column>
+                            <Column field="term" header="Term Percent">
+                                <template #body="slotTableProps">
+                                    <small>{{ slotTableProps.data.term }}%</small>
+                                </template>
+                            </Column>
+                            <Column field="subtotal" header="Subtotal">
+                                <template #body="slotTableProps">
+                                    <small v-tooltip="'(price * (term / 100)) * qty'">{{ formatCurrency(slotTableProps.data.subtotal) }}</small>
+                                </template>
+                            </Column>
+                            <template #footer="slotTableProps">
+                                <div class="text-right font-bold w-full">
+                                    <small class="mr-3">Total Qty : {{ calculateQty(slotProps.item.label) }}</small>
+                                    <small>Total : {{ formatCurrency(calculateTotal(slotProps.item.label)) }}</small>
+                                </div>
                             </template>
-                        </Column>
-                        <Column field="invoice_number" header="Invoice" sortable>
-                            <template #body="slotTableProps">
-                                <small>{{ slotTableProps.data.invoice_number }}</small>
-                            </template>
-                        </Column>
-                        <Column field="date" header="Date" sortable>
-                            <template #body="slotTableProps">
-                                <small>{{ slotTableProps.data.date }}</small>
-                            </template>
-                        </Column>
-                        <Column field="price" header="Unit Price">
-                            <template #body="slotTableProps">
-                                <small>{{ formatCurrency(slotTableProps.data.price) }}</small>
-                            </template>
-                        </Column>
-                        <Column field="qty" header="Qty">
-                            <template #body="slotTableProps">
-                                <small>{{ slotTableProps.data.qty }}</small>
-                            </template>
-                        </Column>
-                        <Column field="term" header="Term Percent">
-                            <template #body="slotTableProps">
-                                <small>{{ slotTableProps.data.term }}%</small>
-                            </template>
-                        </Column>
-                        <Column field="subtotal" header="Subtotal">
-                            <template #body="slotTableProps">
-                                <small v-tooltip="'(price * (term / 100)) * qty'">{{ formatCurrency(slotTableProps.data.subtotal) }}</small>
-                            </template>
-                        </Column>
-                        <template #footer="slotTableProps">
-                            <div class="text-right font-bold w-full">
-                                <small class="mr-3">Total Qty : {{ calculateQty(slotProps.item.label) }}</small>
-                                <small>Total : {{ formatCurrency(calculateTotal(slotProps.item.label)) }}</small>
-                            </div>
-                        </template>
-                    </DataTable>
-                </template>
-            </Card>
-        </template>
-    </Timeline>
+                        </DataTable>
+                    </template>
+                </Card>
+            </template>
+        </Timeline>
+
+        <ScrollTop target="parent" :threshold="100" icon="pi pi-angle-up" :buttonProps="{ severity: 'secondary', raised: true, rounded: true }" />
+    </ScrollPanel>
 
 </template>
 

@@ -159,6 +159,10 @@ const calculateExpectedRemaining = (year, title) => {
                 let invoice = datas[item].invoice.total;
 
                 let subtotal = revenue - invoice;
+                if(title == 'SLB_IOH'){
+                    let bast = datas[item].bast.total;
+                    subtotal = revenue - bast;
+                }
 
                 total = total + subtotal;
             }
@@ -190,7 +194,14 @@ const calculateExpectedRemaining = (year, title) => {
                         <table class="text-left mb-3" style="width:60%;"> 
                             <tr>
                                 <td><small>Expected Revenue's left:</small></td>
-                                <td><small class="font-bold" :style="{ color: slotProps.data.color }">{{ formatCurrency(slotProps.data.raw.revenue - slotProps.data.raw.invoice) }}</small></td>
+                                <td>
+                                    <small v-if="slotProps.data.title == 'SLB_IOH'" class="font-bold" :style="{ color: slotProps.data.color }">
+                                        {{ formatCurrency(slotProps.data.raw.revenue - slotProps.data.raw.bast) }}
+                                    </small>
+                                    <small v-else class="font-bold" :style="{ color: slotProps.data.color }">
+                                        {{ formatCurrency(slotProps.data.raw.revenue - slotProps.data.raw.invoice) }}
+                                    </small>
+                                </td>
                             </tr>
                             <tr>
                                 <td><small>Invoice:</small></td>
