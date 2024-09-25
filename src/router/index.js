@@ -54,6 +54,11 @@ const router = createRouter({
                     name: 'cpBudget',
                     component: () => import('@/views/cp/pages/dashboard/Budget.vue'),
                 },
+                {
+                    path: '/cp/budget/report',
+                    name: 'cpBudgetReport',
+                    component: () => import('@/views/cp/pages/dashboard/BudgetReport.vue'),
+                },
                 
             ]
         },

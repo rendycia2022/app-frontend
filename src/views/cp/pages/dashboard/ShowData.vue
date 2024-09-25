@@ -146,6 +146,13 @@ const items = ref([
             router.push('/cp/dashboard/milestone');
         }
     },
+    {
+        label: 'Budget Report',
+        icon: 'pi pi-file',
+        command: () => {
+            router.push('/cp/budget/report');
+        }
+    },
 ]);
 
 const toggle = (event) => {

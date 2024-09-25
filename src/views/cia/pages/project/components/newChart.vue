@@ -180,7 +180,7 @@ const calculateExpectedRemaining = (year, title) => {
         <Carousel :value="products" :numVisible="3" :numScroll="1" :responsiveOptions="responsiveOptions">
             <template #item="slotProps">
                 <div class="mr-2">
-                    <div class="p-3 flex flex-column border-200 pricing-card cursor-pointer border-2 hover:border-green-500 transition-duration-300 transition-all" style="border-radius: 10px">
+                    <div class="p-3 flex flex-column border-200 pricing-card border-2 hover:border-green-500 transition-duration-300 transition-all" style="border-radius: 10px">
                         <h5 class="text-center" :style="{ color: slotProps.data.color }">{{ slotProps.data.title }}</h5>
                         <div class="mb-5 text-center">
                             <span class="text-600 mr-2 mb-1 md:mb-0"><b>Expected Revenue</b></span>

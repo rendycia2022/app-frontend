@@ -166,11 +166,6 @@ const deleteProduct = async () =>{
                     :value="products" 
                     dataKey="id"
                     @rowExpand="onRowExpand" @rowCollapse="onRowCollapse"
-                    :paginator="true"
-                    :rows="10"
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                    :rowsPerPageOptions="[5, 10, 25]"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
                     resizableColumns 
                     columnResizeMode="fit"
                     :filters="filters"
@@ -179,6 +174,7 @@ const deleteProduct = async () =>{
                     sortField="name" 
                     :sortOrder="1"
                     :rowClass="rowClass"
+                    scrollable scrollHeight="720px"
                 >
                     <template #header>
                         <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
@@ -204,8 +200,8 @@ const deleteProduct = async () =>{
                                     chooseLabel="Usage"
                                     :disabled="!products || !products.length"
                                 />
-                                <Button icon="pi pi-file-excel" severity="danger" v-tooltip="'Download Usage Template'" outlined rounded aria-label="Download Tempate" @click="downloadTemplateRequest()" :disabled="!products || !products.length" ></Button>
-                                <Button text icon="pi pi-plus" label="Expand All" @click="expandAll" class="mr-2 mb-2" />
+                                <Button icon="pi pi-file-excel" severity="danger" v-tooltip="'Download Usage Template'" class="mr-2" outlined rounded aria-label="Download Tempate" @click="downloadTemplateRequest()" :disabled="!products || !products.length" ></Button>
+                                <Button text icon="pi pi-plus" label="Expand All" @click="expandAll" class="mr-1 mb-2" />
                                 <Button text icon="pi pi-minus" label="Collapse All" @click="collapseAll" class="mb-2" />
                             </div>
                         </div>
