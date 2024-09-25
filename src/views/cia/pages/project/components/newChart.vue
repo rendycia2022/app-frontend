@@ -193,10 +193,19 @@ const calculateExpectedRemaining = (year, title) => {
                         </div>
                         <table class="text-left mb-3" style="width:60%;"> 
                             <tr>
-                                <td><small>Expected Revenue's left:</small></td>
                                 <td>
-                                    <small v-if="slotProps.data.title == 'SLB_IOH'" class="font-bold" :style="{ color: slotProps.data.color }">
-                                        {{ formatCurrency(slotProps.data.raw.revenue - slotProps.data.raw.bast) }}
+                                    <small v-if="(slotProps.data.raw.revenue - slotProps.data.raw.invoice) < 0" >Extra Revenue:</small>
+                                    <small v-else >Expected Revenue's left:</small>
+                                </td>
+                                <td>
+                                    <small v-if="slotProps.data.title == 'SLB_IOH' && (slotProps.data.raw.revenue - slotProps.data.raw.invoice) < 0" class="font-bold" :style="{ color: slotProps.data.color }">
+                                        +{{ formatCurrency((slotProps.data.raw.revenue - slotProps.data.raw.bast)*-1) }}
+                                    </small>
+                                    <small v-else-if="slotProps.data.title == 'SLB_IOH'" class="font-bold" :style="{ color: slotProps.data.color }">
+                                        {{ formatCurrency((slotProps.data.raw.revenue - slotProps.data.raw.bast)) }}
+                                    </small>
+                                    <small v-else-if="(slotProps.data.raw.revenue - slotProps.data.raw.invoice) < 0" class="font-bold" :style="{ color: slotProps.data.color }">
+                                        +{{ formatCurrency((slotProps.data.raw.revenue - slotProps.data.raw.invoice)*-1) }}
                                     </small>
                                     <small v-else class="font-bold" :style="{ color: slotProps.data.color }">
                                         {{ formatCurrency(slotProps.data.raw.revenue - slotProps.data.raw.invoice) }}
@@ -205,7 +214,10 @@ const calculateExpectedRemaining = (year, title) => {
                             </tr>
                             <tr>
                                 <td><small>Invoice:</small></td>
-                                <td><small class="font-bold">{{ formatCurrency(slotProps.data.raw.invoice) }}</small></td>
+                                <td>
+                                    <small v-if="slotProps.data.title == 'SLB_IOH'" class="font-bold">{{ formatCurrency(slotProps.data.raw.bast) }}</small>
+                                    <small v-else class="font-bold">{{ formatCurrency(slotProps.data.raw.invoice) }}</small>
+                                </td>
                             </tr>
                         </table>
                         <small>Expected Revenue's left in each year:</small>
@@ -214,7 +226,9 @@ const calculateExpectedRemaining = (year, title) => {
                                 <tr>
                                     <td>
                                         <small>
-                                            <b :style="{ color: slotProps.data.color }">{{ year }}</b>: {{ formatCurrency(calculateExpectedRemaining(year, slotProps.data.title)) }}
+                                            <b :style="{ color: slotProps.data.color }">{{ year }}</b>: 
+                                            <span v-if="calculateExpectedRemaining(year, slotProps.data.title) < 0">+{{ formatCurrency(calculateExpectedRemaining(year, slotProps.data.title)*-1) }}</span>
+                                            <span v-else>{{ formatCurrency(calculateExpectedRemaining(year, slotProps.data.title)) }}</span>
                                         </small>
                                     </td>
                                 </tr>

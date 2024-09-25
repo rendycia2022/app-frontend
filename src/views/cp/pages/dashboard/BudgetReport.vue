@@ -26,7 +26,7 @@ const fetching = async () =>{
         }
     });
     products.value = response.data.list;
-    console.log(products.value)
+    // console.log(products.value)
 }
 
 // filtering start
