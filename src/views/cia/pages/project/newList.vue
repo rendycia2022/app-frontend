@@ -92,7 +92,7 @@ const onCellEditComplete = async (event) => {
     data['user_id'] = local.value.user_id;
     const response = await axiosManagement.post('/project/new/list/remarks', data);
     if(response.data.status == 200){
-        fetching();  
+        filterData(parameters.value);  
     }   
 };
 
@@ -137,7 +137,7 @@ const openLink = (link) =>{
 // dialog
 const closeDialog = (dialog) =>{
     dialog = false;
-    fetching();
+    filterData(parameters.value);
     product.value = {};
 }
 
@@ -287,7 +287,7 @@ const downloadTemplateBAST = async () => {
 
 const onUpload = () => {
     toast.add({ severity: 'success', summary: 'Success', detail: 'File Uploaded, please refresh page', life: 3000 });
-    fetching();
+    filterData(parameters.value);
 };
 
 const op_bast = ref(null);
