@@ -7,7 +7,7 @@ const layoutConfig = reactive({
     menuMode: 'overlay',
     theme: 'lara-light-indigo',
     scale: 14,
-    activeMenuItem: null
+    activeMenuItem: null,
 });
 
 const layoutState = reactive({

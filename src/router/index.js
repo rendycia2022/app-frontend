@@ -117,9 +117,9 @@ const router = createRouter({
                     component: () => import('@/views/cia/pages/project/Summary.vue'),
                 },
                 {
-                    path: '/cia/project/list',
-                    name: 'ciaPageProjectList',
-                    component: () => import('@/views/cia/pages/project/List.vue'),
+                    path: '/cia/project',
+                    name: 'ciaPageProject',
+                    component: () => import('@/views/cia/pages/project/ProjectLayout.vue'),
                 },
                 {
                     path: '/cia/project/sites/:apps/:code',

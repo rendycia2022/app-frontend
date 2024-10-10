@@ -1,13 +1,13 @@
 import { toRefs, reactive, computed } from 'vue';
 
-const layoutConfig = reactive({
+const layoutConfig = reactive({ 
     ripple: false,
     darkTheme: false,
     inputStyle: 'outlined',
-    menuMode: 'overlay',
+    menuMode: 'static',
     theme: 'lara-light-indigo',
     scale: 14,
-    activeMenuItem: null
+    activeMenuItem: null,
 });
 
 const layoutState = reactive({ 
