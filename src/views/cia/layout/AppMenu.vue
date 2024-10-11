@@ -49,8 +49,8 @@ const model = ref(null);
         </template>
         
         <!-- project menu -->
-        <template v-for="(item, i) in model" :key="item">
-            <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
+        <template v-for="(item, j) in model" :key="item">
+            <app-menu-item v-if="!item.separator" :item="item" :index="menus.length+j"></app-menu-item>
             <li v-if="item.separator" class="menu-separator"></li>
         </template>
     </ul>
