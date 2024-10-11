@@ -2,7 +2,7 @@
 import { ref, onMounted, onBeforeMount,  defineProps, watch } from 'vue';
 import AppMenuItem from './AppMenuItem.vue';
 
-import { axiosManagement } from '../../../service/axios';
+import { axiosManagement } from '../../service/axios';
 
 const local = ref({
     user_id: localStorage.getItem('userId'),
@@ -30,10 +30,10 @@ const menus = ref([
     {
         label: 'APPS',
         items: [
-            { label: 'Project', icon: 'pi pi-fw pi-box', to: '/cia/project',},
+            { label: 'Project', icon: 'pi pi-fw pi-box', to: '/project/new/dashboard',},
+            { label: 'AF', icon: 'pi pi-fw pi-box', to: '/af/dashboard',},
             { label: 'XL', icon: 'pi pi-fw pi-box', to: '/cia/project',},
             { label: 'IOH', icon: 'pi pi-fw pi-box', to: '/cia/project',},
-            { label: 'AF', icon: 'pi pi-fw pi-box', to: '/cia/project',},
         ]
     },
 ]);

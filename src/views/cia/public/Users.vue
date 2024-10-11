@@ -2,7 +2,7 @@
 import { FilterMatchMode } from 'primevue/api';
 import { onMounted, reactive, ref, watch, onBeforeMount } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { useLayout } from '@/layout/composables/layout';
+import { useLayout } from '@/layout/cia/composables/layout';
 import { axiosWDua } from '../../../service/axios';
 
 // utilities

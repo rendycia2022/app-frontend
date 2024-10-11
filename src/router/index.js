@@ -4,7 +4,7 @@ import AppLayoutReimbursement from '@/views/hr/layout/AppLayout.vue';
 import AppLayoutProject from '@/views/project/layout/AppLayout.vue';
 import AppLayoutAf from '@/views/af/layout/AppLayout.vue';
 import AppLayoutMaintenance from '@/views/maintenance/layout/AppLayout.vue';
-import AppLayoutCia from '@/views/cia/layout/AppLayout.vue';
+import AppLayoutCia from '@/layout/cia/AppLayout.vue';
 import AppLayoutCp from '@/views/cp/layout/AppLayout.vue';
 
 const router = createRouter({
@@ -62,7 +62,6 @@ const router = createRouter({
                 
             ]
         },
-
         // cia dashboard
         {
             path: '/cia',
@@ -149,7 +148,7 @@ const router = createRouter({
         },
         {
             path: '/af/pages',
-            component: AppLayoutAf,
+            component: AppLayoutCia,
             children: [
                 
                 {
@@ -271,7 +270,7 @@ const router = createRouter({
         // new app
         {
             path: '/project/new',
-            component: AppLayoutProject,
+            component: AppLayoutCia,
             children: [
                 
                 {

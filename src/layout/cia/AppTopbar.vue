@@ -1,10 +1,10 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, onBeforeMount } from 'vue';
-import { useLayout } from '@/views/cia/layout/composables/layout';
+import { useLayout } from '@/layout/cia/composables/layout';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
-import { axiosHR, axiosAf } from '../../../service/axios';
+import { axiosHR, axiosAf } from '../../service/axios';
 
 const toast = useToast();
 const confirmPopup = useConfirm();

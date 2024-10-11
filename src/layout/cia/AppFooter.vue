@@ -1,5 +1,5 @@
 <script setup>
-import { useLayout } from '@/views/cia/layout/composables/layout';
+import { useLayout } from '@/layout/cia/composables/layout';
 import { computed } from 'vue';
 
 const { layoutConfig } = useLayout();

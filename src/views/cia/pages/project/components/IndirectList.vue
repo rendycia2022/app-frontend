@@ -1,7 +1,7 @@
 <script setup>
 import { FilterMatchMode } from 'primevue/api';
 import { onMounted, reactive, ref, watch, onBeforeMount, defineProps } from 'vue';
-import { useLayout } from '@/layout/composables/layout';
+import { useLayout } from '@/layout/cia/composables/layout';
 import { useRoute } from 'vue-router'
 import { useToast } from 'primevue/usetoast';
 
