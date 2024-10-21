@@ -22,7 +22,7 @@ const route = useRoute()
 watch(() => route.params.code, async newValue => {
     var apps = route.params.apps;
     var code = newValue;
-    local.value.link = 'http://103.188.175.175:'+apps+'/workorder/scope/'+code;
+    local.value.link = 'http://103.188.175.175:'+apps+'/workorder/scope/'+code; 
   }
 );
 

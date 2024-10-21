@@ -116,7 +116,7 @@ const router = createRouter({
                     component: () => import('@/views/cia/pages/project/Summary.vue'),
                 },
                 {
-                    path: '/cia/project',
+                    path: '/cia/project/view/:projectInitial',
                     name: 'ciaPageProject',
                     component: () => import('@/views/cia/pages/project/ProjectLayout.vue'),
                 },

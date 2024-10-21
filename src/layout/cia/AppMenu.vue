@@ -32,8 +32,8 @@ const menus = ref([
         items: [
             { label: 'Project', icon: 'pi pi-fw pi-box', to: '/project/new/dashboard',},
             { label: 'AF', icon: 'pi pi-fw pi-box', to: '/af/dashboard',},
-            { label: 'XL', icon: 'pi pi-fw pi-box', to: '/cia/project',},
-            { label: 'IOH', icon: 'pi pi-fw pi-box', to: '/cia/project',},
+            { label: 'XL', icon: 'pi pi-fw pi-box', to: '/cia/project/view/58101',},
+            { label: 'IOH', icon: 'pi pi-fw pi-box', to: '/cia/project/view/58102',},
         ]
     },
 ]);

@@ -55,7 +55,7 @@ const setAll = async (day) =>{
 
 <template>
     <div class="card">
-        <Listbox v-model="selectedProduct" :options="products" optionLabel="body" class="w-full" listStyle="max-height:740px" @change="onSelectionChange" >
+        <Listbox v-model="selectedProduct" :options="products" optionLabel="body" class="w-full" listStyle="height:740px" @change="onSelectionChange" >
             <template #header>
                 <div class="grid">
                     <div class="flex col-6" >
@@ -73,7 +73,7 @@ const setAll = async (day) =>{
                 <div class="flex justify-content-between px-3 py-2 border-left-2 cursor-pointer mx-1 border-round-md surface-50 hover:surface-card hover:border-pink-500 transition-duration-300 transition-all" :class="slotProps.option.border">
                     <div class="flex justify-content-between gap-3">
                         <div class="flex flex-column justify-content-center gap-2">
-                            <span v-if="slotProps.option.title.length >= 60" class="font-medium text-base text-color text-sm" :title="slotProps.option.title" >{{ slotProps.option.title.substring(0, 59) }}...</span>
+                            <span v-if="slotProps.option.title.length >= 40" class="font-medium text-base text-color text-sm" :title="slotProps.option.title" >{{ slotProps.option.title.substring(0, 39) }}...</span>
                             <span v-else class="font-medium text-base text-color text-sm" :title="slotProps.option.subtitle" >{{ slotProps.option.title }}</span>
 
                             <span v-if="slotProps.option.body.length >= 60" class="text-color-secondary text-xs" :title="slotProps.option.body" >
