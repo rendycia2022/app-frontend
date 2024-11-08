@@ -373,7 +373,7 @@ const toggleControllerBAST = (event) => {
                 <span class="align-middle ml-2 font-bold leading-normal">
                     <small>{{ slotProps.data.project.code }},
                         Total Expected Revenue: {{ formatCurrency(calculateTotal(slotProps.data.project.code, 'revenue')) }}
-                        | Total Invoice: {{ formatCurrency(calculateTotal(slotProps.data.project.code, 'invoice')) }}
+                        | Total BAST: {{ formatCurrency(calculateTotal(slotProps.data.project.code, 'bast')) }}
                         | Total Cost: {{ formatCurrency(calculateTotalCost(slotProps.data.project.code)) }}
                         | Total Margin: {{ margin(calculateTotal(slotProps.data.project.code, 'revenue'), calculateTotalCost(slotProps.data.project.code)) }}%
                         | Total PO: {{ formatNumber(calculateTotalQty(slotProps.data.project.code)) }}
