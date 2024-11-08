@@ -194,23 +194,22 @@ const calculateExpectedRemaining = (year, title) => {
                         <table class="text-left mb-3" style="width:60%;"> 
                             <tr>
                                 <td>
-                                    <small v-if="(slotProps.data.raw.revenue - slotProps.data.raw.invoice) < 0" >Extra Revenue:</small>
+                                    <small v-if="(slotProps.data.raw.revenue - slotProps.data.raw.bast) < 0" >Extra Revenue:</small>
                                     <small v-else >Expected Revenue's left:</small>
                                 </td>
                                 <td>
-                                    <small v-if="(slotProps.data.raw.revenue - slotProps.data.raw.invoice) < 0" class="font-bold" :style="{ color: slotProps.data.color }">
+                                    <small v-if="(slotProps.data.raw.revenue - slotProps.data.raw.bast) < 0" class="font-bold" :style="{ color: slotProps.data.color }">
                                         +{{ formatCurrency((slotProps.data.raw.revenue - slotProps.data.raw.bast)*-1) }}
                                     </small>
-                                    <small class="font-bold" :style="{ color: slotProps.data.color }">
+                                    <small v-else class="font-bold" :style="{ color: slotProps.data.color }">
                                         {{ formatCurrency((slotProps.data.raw.revenue - slotProps.data.raw.bast)) }}
                                     </small>
                                 </td>
                             </tr>
                             <tr>
-                                <td><small>Invoice:</small></td>
+                                <td><small>BAST:</small></td>
                                 <td>
-                                    <small v-if="slotProps.data.title == 'SLB_IOH'" class="font-bold">{{ formatCurrency(slotProps.data.raw.bast) }}</small>
-                                    <small v-else class="font-bold">{{ formatCurrency(slotProps.data.raw.invoice) }}</small>
+                                    <small class="font-bold">{{ formatCurrency(slotProps.data.raw.bast) }}</small>
                                 </td>
                             </tr>
                         </table>
