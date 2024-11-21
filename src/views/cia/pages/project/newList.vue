@@ -408,7 +408,10 @@ const toggleControllerBAST = (event) => {
             <Column field="po_number" header="PO Number" :sortable="true" headerStyle="width:20%; min-width:20rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>PO Number</small></span>
-                    <Button @click="openLink(slotProps.data.project_link)" :label="slotProps.data.po_number" severity="info" v-tooltip="'See more'" size="small" text />
+                    <small>{{ slotProps.data.po_number }}</small>
+                    <small v-tooltip="'See more'" @click="openLink(slotProps.data.project_link)" class="cursor-pointer" >
+                        <i class="pi pi-fw pi-external-link text-xs text-blue-500 ml-3"></i>
+                    </small>
                 </template>
             </Column>
             <Column field="file_document" header="File PO" class="text-center" :sortable="true" headerStyle="width:10%; min-width:8rem;">

@@ -64,7 +64,7 @@ const openLink = (link) =>{
                 <small v-else class="font-bold">{{ n.po_number }}</small>
                 <small v-tooltip="'PO Document'" @click="openLink(externalLink)" class="cursor-pointer" >
                     <i class="pi pi-fw pi-external-link text-xs text-blue-500 ml-2"></i>
-                </small>
+                </small> 
             </td>
         </tr>
         <tr>
