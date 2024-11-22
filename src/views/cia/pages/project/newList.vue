@@ -438,6 +438,13 @@ const toggleControllerBAST = (event) => {
                     <Button @click="openBastDialog(slotProps.data)" :label="formatCurrency(slotProps.data.bast.total)" severity="info" v-tooltip="'More BAST detail'" size="small" text />
                 </template>
             </Column>
+            <Column field="difference" header="Expected Revenue - BAST" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>Expected Revenue - BAST</small></span>
+                    <small v-if="slotProps.data.revenue.total - slotProps.data.bast.total < 0" class="text-green-500">+{{ formatCurrency((slotProps.data.revenue.total - slotProps.data.bast.total)*-1) }}</small>
+                    <small v-else class="text-red-500">{{ formatCurrency((slotProps.data.revenue.total - slotProps.data.bast.total)) }}</small>
+                </template>
+            </Column>
             <Column field="invoice.total" header="Invoice" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Invoice</small></span>
