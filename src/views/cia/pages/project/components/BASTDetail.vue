@@ -90,9 +90,32 @@ const calculateQty = (label) =>{
     return total;
 }
 
+// delete
+const payload = ref({});
+const selectedProduct = ref(null);
+const deleteSelectedDialog = ref(false);
+
+const confirmDeleteSelected = () => {
+    deleteSelectedDialog.value = true;
+};
+const deleteSelectedProducts = async () => {
+    const data = selectedProduct.value;
+    const response = await axiosManagement.delete('/project/new/bast',{data: {data},
+        params: local.value
+    });
+    if(response.data.status == 200){
+        toast.add({ severity: 'warn', summary: 'Attention!', detail: 'Data has been deleted.', life: 5000 });
+        fetching();
+        selectedProduct.value = null;
+        deleteSelectedDialog.value = false;
+    }
+    
+};
+
 </script>
 
 <template>
+    <Toast />
     <span v-if="product" class="text-xl line-height-3 mb-2">
         Total Qty in Expected Revenue: <b>{{ product.revenue.totalQty }}</b>
     </span>
@@ -107,13 +130,16 @@ const calculateQty = (label) =>{
                         
                     </template>
                     <template #content>
+                        <Button icon="pi pi-trash" class="p-button-warning p-button-rounded mr-2 mb-2" @click="confirmDeleteSelected" title="Delete" :disabled="!selectedProduct || !selectedProduct.length" />
                         <DataTable 
+                            v-model:selection="selectedProduct"
                             :value="slotProps.item.raw" 
                             tableStyle="min-width: 20rem" 
                             size="small"
                             sortField="date" :sortOrder="1"
                             removableSort 
                         >
+                            <Column selectionMode="multiple" headerStyle="width: 5%"></Column>
                             <Column header="#">
                                 <template #body="slotProps">
                                     <small>{{ slotProps.index + 1 }}</small>
@@ -152,7 +178,7 @@ const calculateQty = (label) =>{
                             <template #footer="slotTableProps">
                                 <div class="text-right font-bold w-full">
                                     <small class="mr-3">Total Qty : {{ calculateQty(slotProps.item.label) }}</small>
-                                    <small>Total : {{ formatCurrency(calculateTotal(slotProps.item.label)) }}</small>
+                                    <small>Total : {{ formatCurrency(calculateTotal(slotProps.item.label)) }}</small> 
                                 </div>
                             </template>
                         </DataTable>
@@ -164,6 +190,17 @@ const calculateQty = (label) =>{
         <ScrollTop target="parent" :threshold="100" icon="pi pi-angle-up" :buttonProps="{ severity: 'secondary', raised: true, rounded: true }" />
     </ScrollPanel>
 
+    <!-- Delete selected dialog -->
+    <Dialog v-model:visible="deleteSelectedDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
+        <div class="flex align-items-center justify-content-center">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+            <span v-if="selectedProduct">Are you sure you want to delete the selected data?</span>
+        </div>
+        <template #footer >
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteSelectedDialog = false" />
+            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteSelectedProducts" />
+        </template>
+    </Dialog>
 </template>
 
 <style lang="scss" scoped>
