@@ -2,12 +2,15 @@
 import { FilterMatchMode } from 'primevue/api';
 import { onMounted, reactive, ref, watch, onBeforeMount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
+import { useRouter } from 'vue-router';
 import { axiosProject } from '../../../../../service/axios';
 
 const local = ref({
     user_id: localStorage.getItem('id'),
     token: localStorage.getItem('token'),
 });
+
+const router = useRouter();
 
 // config
 const handleEnterKey = (event) =>{
@@ -93,6 +96,29 @@ const formatCurrency = (value) => {
     return value?.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
 };
 
+// delete
+const deleteProductDialog = ref(false);
+const confirmDeleteProduct = (detail) => {
+    product.value = detail;
+    product.value.token = local.value.token;
+    product.value.user_id = local.value.user_id;
+
+    deleteProductDialog.value = true;
+};
+
+const deleteProduct = async () =>{
+    const response = await axiosProject.delete('/v2/projects/'+product.value.code, {data: product.value,
+        params: local.value
+    });
+    if(response.data.status == 200){
+        deleteProductDialog.value = false;
+        product.value = {};
+        toast.add({ severity: 'error', summary: 'Warning!', detail: 'Data deleted', life: 3000 });
+        // go to dashboard
+        router.push({path: '/project/new/dashboard'})
+    }
+};
+
 </script>
 
 <template>
@@ -162,5 +188,31 @@ const formatCurrency = (value) => {
                 <Calendar v-model="data[field]" :selectOtherMonths="true" dateFormat="yy-mm-dd" :showIcon="true" :showButtonBar="true" ></Calendar>
             </template>
         </Column>
+        <Column field="action" header="Action" headerStyle="width: 10%" >
+            <template #body="slotProps">
+                <span class="p-column-title text-xs"><small>Action</small></span>
+                <small>
+                    <Button 
+                        label="Delete" class="p-button-rounded p-button-danger small-padding-button" 
+                        @click="confirmDeleteProduct(slotProps.data)"
+                        size="small" text
+                    />
+            </small>
+            </template>
+        </Column>
     </DataTable>
+
+    <Dialog v-model:visible="deleteProductDialog" :style="{ width: '550px' }" header="Confirm" :modal="true">
+        <div class="flex align-items-center justify-content-center">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+            <span v-if="product"
+                >Are you sure you want to delete <b>{{ product.po_number }}</b
+                >?</span
+            >
+        </div>
+        <template #footer>
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteProductDialog = false" />
+            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteProduct" />
+        </template>
+    </Dialog>
 </template>

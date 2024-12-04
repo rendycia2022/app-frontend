@@ -20,6 +20,7 @@ const fetching = async () =>{
             user_id: local.value.user_id,
             year: "All",
             status: "All",
+            project: "All",
         }
     });
     originalProducts.value = response.data.charts;
@@ -27,6 +28,7 @@ const fetching = async () =>{
 
     productsRaw.value = response.data;
     years.value = productsRaw.value.optionYears;
+
 }
 
 onMounted( () => {
@@ -107,10 +109,11 @@ const responsiveOptions = ref([
 ]);
 
 // filter
-const props = defineProps(['status', 'year']);
+const props = defineProps(['status', 'year', 'project']);
 const parameters = ref({
     year: "All",
     status: "All",
+    project: "All",
 });
 
 watch(() => props.year, (newValue, oldValue) => {
@@ -123,6 +126,11 @@ watch(() => props.status, (newValue, oldValue) => {
     filterData(parameters.value);
 });
 
+watch(() => props.project, (newValue, oldValue) => {
+    parameters.value.project = newValue;
+    filterData(parameters.value);
+});
+
 const filterData = async (params) =>{
     const response = await axiosManagement.get('/project/new/chart',{ 
         params:{
@@ -130,6 +138,7 @@ const filterData = async (params) =>{
             user_id: local.value.user_id,
             year: params.year,
             status: params.status,
+            project: params.project,
         }
     });
     products.value = response.data.charts;

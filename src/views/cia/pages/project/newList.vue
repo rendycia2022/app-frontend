@@ -31,6 +31,7 @@ const fetching = async () =>{
             user_id: local.value.user_id,
             year: "All",
             status: "All",
+            project: "All",
         }
     });
     products.value = response.data.list;
@@ -111,7 +112,7 @@ const margin = (revenue, cost) =>{
 // row style conditional
 const rowClass = (data) => {
     let totalCost = data.indirect.total + data.direct.total;
-    return [{ 'bg-red-100 ': totalCost > data.invoice.total }];
+    return [{ 'bg-red-100 ': totalCost > data.bast.total }];
 };
 
 const textAreaNewLineCount = (text) =>{
@@ -235,10 +236,11 @@ const calculateTotalQtyStatus = (name, meta) => {
 };
 
 // filter
-const props = defineProps(['status', 'year']);
+const props = defineProps(['status', 'year', 'project']);
 const parameters = ref({
     year: "All",
     status: "All",
+    project: "All",
 });
 
 watch(() => props.year, (newValue, oldValue) => {
@@ -251,6 +253,11 @@ watch(() => props.status, (newValue, oldValue) => {
     filterData(parameters.value);
 });
 
+watch(() => props.project, (newValue, oldValue) => {
+    parameters.value.project = newValue;
+    filterData(parameters.value);
+});
+
 const filterData = async (params) =>{
     const response = await axiosManagement.get('/project/new/list',{ 
         params:{
@@ -258,6 +265,7 @@ const filterData = async (params) =>{
             user_id: local.value.user_id,
             year: params.year,
             status: params.status,
+            project: params.project,
         }
     });
     products.value = response.data.list;
@@ -337,6 +345,7 @@ const toggleControllerBAST = (event) => {
                         <div class="flex flex-wrap gap-2 justify-end">
                             <ul>
                                 <li><b class="text-blue-500">BLUE</b> Color Text is LINK to PPS and AF Web Applications</li>
+                                <li><b class="text-red-100">RED</b> Color Row is Indirect Cost Greater than BAST</li>
                             </ul>
                         </div>
                         
@@ -438,17 +447,25 @@ const toggleControllerBAST = (event) => {
                     <Button @click="openBastDialog(slotProps.data)" :label="formatCurrency(slotProps.data.bast.total)" severity="info" v-tooltip="'More BAST detail'" size="small" text />
                 </template>
             </Column>
-            <Column field="difference" header="Expected Revenue - BAST" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+            <Column field="invoice.total" header="Invoice" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>Invoice</small></span>
+                    <small>{{ formatCurrency(slotProps.data.invoice.total) }}</small>
+                </template>
+            </Column>
+            <Column field="difference_exp_bast" header="Expected Revenue - BAST" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Expected Revenue - BAST</small></span>
                     <small v-if="slotProps.data.revenue.total - slotProps.data.bast.total < 0" class="text-green-500">+{{ formatCurrency((slotProps.data.revenue.total - slotProps.data.bast.total)*-1) }}</small>
                     <small v-else class="text-red-500">{{ formatCurrency((slotProps.data.revenue.total - slotProps.data.bast.total)) }}</small>
                 </template>
             </Column>
-            <Column field="invoice.total" header="Invoice" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+            <Column field="difference_bast_inv" header="BAST - Invoice" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                 <template #body="slotProps">
-                    <span class="p-column-title text-xs"><small>Invoice</small></span>
-                    <small>{{ formatCurrency(slotProps.data.invoice.total) }}</small>
+                    <span class="p-column-title text-xs"><small>BAST - Invoice</small></span>
+                    <small v-if="slotProps.data.bast.total - slotProps.data.invoice.total < 0" class="text-red-500">{{ formatCurrency(slotProps.data.bast.total - slotProps.data.invoice.total) }}</small>
+                    <small v-else-if="slotProps.data.bast.total - slotProps.data.invoice.total == 0" >{{ formatCurrency(slotProps.data.bast.total - slotProps.data.invoice.total) }}</small>
+                    <small v-else class="text-green-500">{{ formatCurrency(slotProps.data.bast.total - slotProps.data.invoice.total) }}</small>
                 </template>
             </Column>
             <Column field="indirect.total" header="Indirect" :sortable="true" headerStyle="width:14%; min-width:10rem;">
@@ -461,6 +478,12 @@ const toggleControllerBAST = (event) => {
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Direct</small></span>
                     <Button @click="openLink(slotProps.data.project_link)" :label="formatCurrency(slotProps.data.direct.total)" severity="info" v-tooltip="'Direct cost detail'" size="small" text />
+                </template>
+            </Column>
+            <Column field="cost.total" header="Cost" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                <template #body="slotProps">
+                    <span class="p-column-title text-xs"><small>Cost</small></span>
+                    <small>{{ formatCurrency(slotProps.data.cost.total) }}</small>
                 </template>
             </Column>
             <Column field="cogs" header="Total Cost / COGS" :sortable="true" headerStyle="width:14%; min-width:10rem;">

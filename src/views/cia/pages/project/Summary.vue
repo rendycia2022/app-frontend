@@ -19,10 +19,18 @@ const fetching = async () =>{
             user_id: local.value.user_id,
             year: "all",
             status: "all",
+            project: "all",
         }
     });
+
+    // years option
     years.value = response.data.optionYears;
-    years.value.unshift("All")
+    years.value.unshift("All");
+
+    // project option
+    project.value = response.data.optionProjects;
+    project.value.unshift("All");
+
 }
 onMounted( () => {
     fetching();
@@ -36,6 +44,10 @@ const status = ref(["All","Open", "Close"]);
 const selectedYear = ref("All");
 const years = ref([]);
 
+// project
+const selectedProject = ref("All");
+const project = ref([]);
+
 </script>
 
 <template>
@@ -47,6 +59,10 @@ const years = ref([]);
             </div>
             <label for="name3" class="ml-5 mr-2"><b>Status:</b></label>
             <Dropdown v-model="selectedStatus" :options="status" placeholder="Select status" class="w-100 mr-1"></Dropdown>
+            <label for="name3" class="ml-5 mr-2"><b>Project:</b></label>
+            <div class="">
+                <Dropdown v-model="selectedProject" :options="project" class="w-100"></Dropdown>
+            </div>
         </template>
 
         <template #center>
@@ -56,10 +72,10 @@ const years = ref([]);
     </Toolbar>
     <div class="grid">
         <div class="col-12 sm:col-12 md:col-12 lg:col-12 xl:col-12">
-            <newChart :status="selectedStatus" :year="selectedYear" />
+            <newChart :status="selectedStatus" :year="selectedYear" :project="selectedProject" />
         </div>
         <div class="col-12 sm:col-12 md:col-12 lg:col-12 xl:col-12">
-            <newList :status="selectedStatus" :year="selectedYear" />
+            <newList :status="selectedStatus" :year="selectedYear" :project="selectedProject" />
         </div>
         <ScrollTop />
         <!-- <div class="col-12 sm:col-12 md:col-6 lg:col-4 xl:col-4">
