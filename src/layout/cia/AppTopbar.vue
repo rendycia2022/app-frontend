@@ -4,7 +4,7 @@ import { useLayout } from '@/layout/cia/composables/layout';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
-import { axiosHR, axiosAf } from '../../service/axios';
+import { axiosHR, axiosAf, axiosManagement } from '../../service/axios';
 
 const toast = useToast();
 const confirmPopup = useConfirm();
@@ -37,7 +37,7 @@ const getAuth = async ()=>{
     if(!token){
         router.push({path: '/cia'})
     }
-    const auth = await axiosAf.get('/auth/token',{ 
+    const auth = await axiosManagement.get('/v2/auth/token',{ 
                 params:{
                     token: local.value.token,
                     user_id: local.value.userId,
@@ -68,7 +68,9 @@ const logoUrl = computed(() => {
 
 const onTopBarMenuButton = () => {
     topbarMenuActive.value = !topbarMenuActive.value;
+    router.push('/info/user');
 };
+
 const confirm = (event) => {
     confirmPopup.require({
         target: event.target,

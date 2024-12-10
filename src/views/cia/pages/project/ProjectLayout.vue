@@ -4,21 +4,37 @@ import { onMounted, reactive, ref, watch, onBeforeMount } from 'vue';
 import { useLayout } from '@/layout/cia/composables/layout';
 import History from './components/History.vue';
 import { useRoute } from 'vue-router'
+import { axiosManagement, axiosProject } from '../../../../service/axios';
 
 const local = ref({
     user_id: localStorage.getItem('userId'),
     token: localStorage.getItem('token'),
 });
 
-onMounted(() => {
+const user = ref({});
+
+const getUser = async () =>{
+    const response = await axiosManagement.get('/v2/auth/token/project_apps/'+local.value.token,{ 
+        params:{
+            token: local.value.token,
+            user_id: local.value.user_id,
+        }
+    });
+    user.value.username = response.data.user.username;
+    user.value.password = response.data.user.password;
+}
+
+onMounted( async () => {
+    await getUser();
     var port = route.params.projectInitial;
-    local.value.link = 'http://103.188.175.175:'+port+'/dashboard';
+    local.value.link = 'http://103.188.175.175:'+port+'/login/'+local.value.token+'/'+user.value.username+'/'+user.value.password;
 });
 
 const route = useRoute()
 watch(() => route.params.projectInitial, async newValue => {
+    await getUser();
     var port = newValue;
-    local.value.link = 'http://103.188.175.175:'+port+'/dashboard';
+    local.value.link = 'http://103.188.175.175:'+port+'/login/'+local.value.token+'/'+user.value.username+'/'+user.value.password;
   }
 );
 
