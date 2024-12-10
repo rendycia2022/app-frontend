@@ -82,7 +82,12 @@ const router = createRouter({
             path: '/cia/pages',
             component: AppLayoutCia,
             children: [
-
+                {
+                    path: '/info/user',
+                    name: 'infouser',
+                    component: () => import('@/views/info/user.vue')
+                },
+                
                 // new design start
 
                 {
@@ -397,11 +402,7 @@ const router = createRouter({
                 
             ]
         },
-        {
-            path: '/info/user',
-            name: 'infouser',
-            component: () => import('@/views/info/user.vue')
-        },
+        
         // hr routes end
         
         {
