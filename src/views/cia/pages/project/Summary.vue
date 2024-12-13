@@ -5,7 +5,7 @@ import { useLayout } from '@/layout/cia/composables/layout';
 import { axiosManagement } from '../../../../service/axios';
 
 import newChart from './components/newChart.vue';
-import newList from './newList.vue'
+import newList from './newList.vue';
 
 const local = ref({
     user_id: localStorage.getItem('userId'),

@@ -24,6 +24,7 @@ const handleEnterKey = (event) =>{
 // data
 const products = ref(null);
 const product = ref({});
+const totalPO = ref(null);
 const fetching = async () =>{
     const response = await axiosManagement.get('/project/new/list',{ 
         params:{
@@ -35,6 +36,7 @@ const fetching = async () =>{
         }
     });
     products.value = response.data.list;
+    totalPO.value = response.data.total_po_byProject;
 
     const backendResponse = await axiosManagement.get('/project/new/bast/backend/target',{ 
         params:{
@@ -269,6 +271,7 @@ const filterData = async (params) =>{
         }
     });
     products.value = response.data.list;
+    totalPO.value = response.data.total_po_byProject;
 }
 
 // upload bast
@@ -385,7 +388,7 @@ const toggleControllerBAST = (event) => {
                         | Total BAST: {{ formatCurrency(calculateTotal(slotProps.data.project.code, 'bast')) }}
                         | Total Cost: {{ formatCurrency(calculateTotalCost(slotProps.data.project.code)) }}
                         | Total Margin: {{ margin(calculateTotal(slotProps.data.project.code, 'revenue'), calculateTotalCost(slotProps.data.project.code)) }}%
-                        | Total PO: {{ formatNumber(calculateTotalQty(slotProps.data.project.code)) }}
+                        | Total PO: {{ formatNumber(totalPO[slotProps.data.project.code]) }}
                         | Open: {{ calculateTotalQtyStatus(slotProps.data.project.code, 'Open') }}
                         | Close: {{ calculateTotalQtyStatus(slotProps.data.project.code, 'Close') }}
                     </small>
