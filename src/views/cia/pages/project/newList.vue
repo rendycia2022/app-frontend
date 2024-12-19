@@ -79,7 +79,7 @@ const collapseAll = () => {
 
 // formating data
 const formatCurrency = (value) => {
-    return 'Rp '+value?.toLocaleString('en-US')+'.00';
+    return 'Rp '+value?.toLocaleString('en-US');
     // return value?.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
 };
 
@@ -439,7 +439,7 @@ const toggleControllerBAST = (event) => {
                     <span>{{ slotProps.data.name }}</span>
                 </template>
             </Column>
-            <Column field="revenue.total" header="Expected Revenue" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+            <Column field="revenue.total" header="Expected Revenue" :sortable="true" headerStyle="width:20%; min-width:15rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Expected Revenue</small></span>
                     <small>{{ formatCurrency(slotProps.data.revenue.total) }}</small>
@@ -454,13 +454,13 @@ const toggleControllerBAST = (event) => {
                     </small>
                 </template>
             </Column>
-            <Column field="invoice.total" header="Invoice" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+            <Column field="invoice.total" header="Invoice" :sortable="true" headerStyle="width:20%; min-width:15rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Invoice</small></span>
                     <small>{{ formatCurrency(slotProps.data.invoice.total) }}</small>
                 </template>
             </Column>
-            <Column field="difference_exp_bast" header="Expected Revenue - BAST" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+            <Column field="difference_exp_bast" header="Expected Revenue - BAST" :sortable="true" headerStyle="width:20%; min-width:15rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Expected Revenue - BAST</small></span>
                     <small v-if="slotProps.data.revenue.total - slotProps.data.bast.total < 0" class="text-green-500">+{{ formatCurrency((slotProps.data.revenue.total - slotProps.data.bast.total)*-1) }}</small>
@@ -468,7 +468,7 @@ const toggleControllerBAST = (event) => {
                     <small v-else class="text-red-500">-{{ formatCurrency((slotProps.data.revenue.total - slotProps.data.bast.total)) }}</small>
                 </template>
             </Column>
-            <Column field="difference_bast_inv" header="BAST - Invoice" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+            <Column field="difference_bast_inv" header="BAST - Invoice" :sortable="true" headerStyle="width:20%; min-width:15rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>BAST - Invoice</small></span>
                     <small v-if="slotProps.data.bast.total - slotProps.data.invoice.total < 0" class="text-red-500">-{{ formatCurrency(slotProps.data.bast.total - slotProps.data.invoice.total) }}</small>
@@ -476,7 +476,7 @@ const toggleControllerBAST = (event) => {
                     <small v-else class="text-green-500">+{{ formatCurrency(slotProps.data.bast.total - slotProps.data.invoice.total) }}</small>
                 </template>
             </Column>
-            <Column field="indirect.total" header="Indirect" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+            <Column field="indirect.total" header="Indirect" :sortable="true" headerStyle="width:20%; min-width:15rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Indirect</small></span>
                     <small>{{ formatCurrency(slotProps.data.indirect.total) }}</small>
@@ -485,7 +485,7 @@ const toggleControllerBAST = (event) => {
                     </small>
                 </template>
             </Column>
-            <Column field="direct.total" header="Direct" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+            <Column field="direct.total" header="Direct" :sortable="true" headerStyle="width:20%; min-width:15rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Direct</small></span>
                     <small>{{ formatCurrency(slotProps.data.direct.total) }}</small>
@@ -494,13 +494,13 @@ const toggleControllerBAST = (event) => {
                     </small>
                 </template>
             </Column>
-            <Column field="cost.total" header="Cost" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+            <Column field="cost.total" header="Cost" :sortable="true" headerStyle="width:20%; min-width:15rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Cost</small></span>
                     <small>{{ formatCurrency(slotProps.data.cost.total) }}</small>
                 </template>
             </Column>
-            <Column field="cogs" header="Total Cost / COGS" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+            <Column field="cogs" header="Total Cost / COGS" :sortable="true" headerStyle="width:15%; min-width:15rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Total Cost / COGS</small></span>
                     <small>{{ formatCurrency(slotProps.data.indirect.total + slotProps.data.direct.total) }}</small>
@@ -509,14 +509,14 @@ const toggleControllerBAST = (event) => {
             <Column field="margin" header="Margin" :sortable="true" headerStyle="width:20%; min-width:15rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>Margin</small></span>
-                    <small>{{ formatCurrency(slotProps.data.revenue.total - slotProps.data.cost.total) }}</small>
+                    <small>{{ formatCurrency(slotProps.data.bast.total - slotProps.data.cost.total) }}</small>
                     <!-- <small>{{ formatCurrency(slotProps.data.revenue.total - (slotProps.data.indirect.total + slotProps.data.direct.total)) }}</small> -->
                 </template>
             </Column>
             <Column field="margin_percent" header="% Margin" class="text-center" :sortable="true" headerStyle="width:10%; min-width:10rem;">
                 <template #body="slotProps">
                     <span class="p-column-title text-xs"><small>% Margin</small></span>
-                    <small>{{ margin(slotProps.data.revenue.total, slotProps.data.cost.total) }}%</small>
+                    <small>{{ margin(slotProps.data.bast.total, slotProps.data.cost.total) }}%</small>
                     <!-- <small>{{ margin(slotProps.data.revenue.total, (slotProps.data.indirect.total + slotProps.data.direct.total)) }}%</small> -->
                 </template>
             </Column>

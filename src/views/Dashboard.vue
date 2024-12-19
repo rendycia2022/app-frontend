@@ -39,7 +39,7 @@ onMounted(() => {
 });
 
 const formatCurrency = (value) => {
-    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    return 'Rp '+value?.toLocaleString('en-US');
 };
 const applyLightTheme = () => {
     lineOptions.value = {
