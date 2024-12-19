@@ -69,7 +69,8 @@ const setChartOptions = () => {
 
 // formating data
 const formatCurrency = (value) => {
-    return value?.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
+    return 'Rp '+value?.toLocaleString('en-US')+'.00';
+    // return value?.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
 };
 
 // data formulas

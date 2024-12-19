@@ -52,7 +52,8 @@ onMounted(() => {
 
 // formating text
 const formatCurrency = (value) => {
-    return value?.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
+    return 'Rp '+value?.toLocaleString('en-US')+'.00';
+    // return value?.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
 };
 
 // calculate
@@ -111,7 +112,7 @@ const calculateTotal = () =>{
         </li>
         <li class="flex align-items-center py-1 border-bottom-1 surface-border">
             <span class="text-900 line-height-1 mr-2"><small>Material Purchasing</small></span>
-            <span class="text-cyan-500"><small><b>{{ formatCurrency(products.direct?.['Material Purchasing']) }}</b></small></span>
+            <span class="text-cyan-500"><small><b>{{ formatCurrency(products.direct?.['Material-Purchasing']) }}</b></small></span>
         </li>
         <li class="flex align-items-center py-1 border-bottom-1 surface-border">
             <span class="text-900 line-height-1 mr-2"><small>Sub-Contracting</small></span>
